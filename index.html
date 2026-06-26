@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UrbanEco Analytics — Transforming energy data into real estate intelligence. Projecto académico Big Data, ISEP 2026. Energy Value Index (EVI).">
+  <title>UrbanEco Analytics — Energy Value Index</title>
+  <style>
+    /* ============================================================
+       RESET & TOKENS
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #06100a;
+      --bg-surface:   #0c1a10;
+      --bg-card:      #101e13;
+      --bg-card-h:    #152019;
+      --g-deep:       #1a3a22;
+      --g-mid:        #2d6a4f;
+      --g-accent:     #52b788;
+      --g-bright:     #74c69d;
+      --g-pale:       #b7e4c7;
+      --g-glow:       rgba(82,183,136,.14);
+      --white:        #edf5ef;
+      --c100:         #cdddd0;
+      --c400:         #7a9a80;
+      --c600:         #4a5e4c;
+      --border:       rgba(82,183,136,.14);
+      --border-b:     rgba(82,183,136,.42);
+      --ff-display:   Georgia,'Times New Roman',serif;
+      --ff-body:      'Segoe UI',system-ui,-apple-system,sans-serif;
+      --ff-mono:      'Courier New',Courier,monospace;
+      --r:            8px;
+      --t:            .28s ease;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--ff-body);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    h1,h2,h3 { font-family: var(--ff-display); font-weight: normal; }
+    h1 { font-size: clamp(2.4rem,5.5vw,5rem); line-height: 1.08; }
+    h2 { font-size: clamp(1.8rem,3.2vw,3rem); line-height: 1.15; }
+    h3 { font-size: clamp(1rem,1.8vw,1.4rem); }
+    p  { color: var(--c100); }
+    a  { color: inherit; text-decoration: none; }
+
+    .container { max-width: 1180px; margin: 0 auto; padding: 0 2rem; }
+    section    { padding: 6rem 0; }
+
+    ::-webkit-scrollbar            { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track      { background: var(--bg); }
+    ::-webkit-scrollbar-thumb      { background: var(--g-deep); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover{ background: var(--g-mid); }
+    ::selection { background: rgba(82,183,136,.28); color: var(--white); }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(6,16,10,.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 0;
+    }
+    .nav-inner {
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1.5rem;
+    }
+    .nav-logo {
+      font-family: var(--ff-mono); font-size: .82rem;
+      letter-spacing: .12em; color: var(--g-accent);
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a {
+      font-size: .82rem; letter-spacing: .04em;
+      color: var(--c400); transition: color var(--t);
+    }
+    .nav-links a:hover { color: var(--g-accent); }
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--g-accent);
+      color: var(--g-accent); padding: .38rem 1rem;
+      border-radius: var(--r); font-family: var(--ff-mono);
+      font-size: .75rem; cursor: pointer; white-space: nowrap;
+      transition: all var(--t);
+    }
+    .nav-cta:hover { background: var(--g-accent); color: var(--bg); }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--g-accent); transition: var(--t);
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding: 8rem 0 5rem;
+    }
+    /* dot grid */
+    #hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(82,183,136,.11) 1px, transparent 1px);
+      background-size: 30px 30px;
+      animation: gridDrift 22s linear infinite;
+    }
+    /* green glow */
+    #hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 75% 55%, rgba(26,58,34,.45) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 15% 75%, rgba(82,183,136,.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    @keyframes gridDrift {
+      0%   { transform: translate(0,0); }
+      100% { transform: translate(30px,30px); }
+    }
+
+    .hero-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .hero-eyebrow {
+      font-family: var(--ff-mono); font-size: .75rem;
+      letter-spacing: .2em; color: var(--g-accent);
+      text-transform: uppercase; margin-bottom: 1.4rem;
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block;
+      width: 2rem; height: 1px; background: var(--g-accent);
+    }
+    .hero-title { margin-bottom: 1.2rem; }
+    .hero-title em { font-style: normal; color: var(--g-accent); }
+    .hero-tagline {
+      font-size: 1.05rem; color: var(--c400);
+      margin-bottom: 1.4rem;
+      font-style: italic; font-family: var(--ff-display);
+    }
+    .hero-desc {
+      font-size: .95rem; color: var(--c400);
+      margin-bottom: 2.4rem; max-width: 460px; line-height: 1.7;
+    }
+    .hero-desc strong { color: var(--white); }
+    .hero-ctas {
+      display: flex; gap: .9rem;
+      flex-wrap: wrap; margin-bottom: 2.5rem;
+    }
+    .btn-primary {
+      background: var(--g-accent); color: var(--bg);
+      padding: .72rem 1.8rem; border-radius: var(--r);
+      font-weight: 700; font-size: .88rem; border: none;
+      cursor: pointer; display: inline-flex; align-items: center; gap: .45rem;
+      transition: all var(--t);
+    }
+    .btn-primary:hover {
+      background: var(--g-bright); transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(82,183,136,.32);
+    }
+    .btn-secondary {
+      background: transparent; color: var(--white);
+      padding: .72rem 1.8rem; border-radius: var(--r);
+      font-size: .88rem; border: 1px solid var(--border-b);
+      cursor: pointer; display: inline-flex; align-items: center; gap: .45rem;
+      transition: all var(--t);
+    }
+    .btn-secondary:hover {
+      border-color: var(--g-accent); color: var(--g-accent);
+      background: var(--g-glow);
+    }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: .45rem; }
+    .badge {
+      font-family: var(--ff-mono); font-size: .68rem;
+      letter-spacing: .07em; padding: .28rem .7rem;
+      border-radius: 100px; border: 1px solid var(--border);
+      color: var(--c400); background: var(--bg-surface);
+    }
+    .badge-g {
+      border-color: rgba(82,183,136,.45);
+      color: var(--g-accent); background: rgba(82,183,136,.07);
+    }
+
+    /* ============================================================
+       EVI DASHBOARD CARD
+    ============================================================ */
+    .evi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 1.8rem;
+      position: relative; overflow: hidden;
+    }
+    .evi-card::before {
+      content: '';
+      position: absolute; top: -50%; right: -25%;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(82,183,136,.09) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .evi-card-hdr {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.2rem; padding-bottom: .9rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .evi-card-title {
+      font-family: var(--ff-mono); font-size: .72rem;
+      letter-spacing: .14em; color: var(--c400); text-transform: uppercase;
+    }
+    .live-dot {
+      display: flex; align-items: center; gap: .35rem;
+      font-family: var(--ff-mono); font-size: .62rem; color: var(--g-accent);
+    }
+    .live-dot::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--g-accent); border-radius: 50%;
+      animation: livePulse 1.8s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .45; transform: scale(.75); }
+    }
+    .evi-score { text-align: center; padding: 1.2rem 0; }
+    .evi-number {
+      font-family: var(--ff-mono); font-size: 4.8rem; font-weight: bold;
+      color: var(--g-accent); line-height: 1;
+      text-shadow: 0 0 48px rgba(82,183,136,.38);
+      letter-spacing: -.02em;
+    }
+    .evi-label {
+      font-family: var(--ff-mono); font-size: .62rem;
+      color: var(--c400); letter-spacing: .1em; margin-top: .4rem;
+    }
+    .evi-breakdown { display: flex; flex-direction: column; gap: .65rem; margin-top: 1.3rem; }
+    .evi-row { display: flex; align-items: center; gap: .65rem; }
+    .evi-row-lbl {
+      font-family: var(--ff-mono); font-size: .62rem;
+      color: var(--c400); width: 118px; flex-shrink: 0;
+    }
+    .evi-bar-bg {
+      flex: 1; height: 3px;
+      background: var(--g-deep); border-radius: 2px; overflow: hidden;
+    }
+    .evi-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--g-mid), var(--g-accent));
+      border-radius: 2px; width: 0;
+      transition: width 1.4s cubic-bezier(.25,.8,.25,1);
+    }
+    .evi-row-val {
+      font-family: var(--ff-mono); font-size: .65rem;
+      color: var(--g-bright); width: 32px; text-align: right;
+    }
+    .evi-card-ftr {
+      margin-top: 1.3rem; padding-top: .9rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .evi-prop {
+      font-size: .68rem; color: var(--c400); font-family: var(--ff-mono);
+      line-height: 1.6;
+    }
+    .evi-class {
+      background: rgba(82,183,136,.12);
+      border: 1px solid var(--g-accent);
+      color: var(--g-accent); padding: .22rem .6rem;
+      border-radius: 4px; font-family: var(--ff-mono);
+      font-size: .7rem; font-weight: bold; letter-spacing: .08em;
+    }
+
+    /* ============================================================
+       SECTION HEADERS (shared)
+    ============================================================ */
+    .eyebrow {
+      font-family: var(--ff-mono); font-size: .73rem;
+      letter-spacing: .2em; color: var(--g-accent);
+      text-transform: uppercase; margin-bottom: .9rem;
+      display: flex; align-items: center; gap: .7rem;
+    }
+    .eyebrow::after {
+      content: ''; flex: 1; max-width: 2.5rem;
+      height: 1px; background: var(--g-accent);
+    }
+    .section-intro {
+      font-size: 1.02rem; color: var(--c400);
+      max-width: 600px; margin-bottom: 3rem; line-height: 1.7;
+    }
+
+    /* ============================================================
+       PROBLEMA
+    ============================================================ */
+    #problema {
+      background: var(--bg-surface);
+      position: relative;
+    }
+    #problema::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, transparent 10%, var(--g-accent) 50%, transparent 90%);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+      gap: 1.3rem; margin-bottom: 2.8rem;
+    }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.8rem;
+      transition: border-color var(--t), transform var(--t);
+    }
+    .stat-card:hover { border-color: var(--border-b); transform: translateY(-4px); }
+    .stat-number {
+      font-family: var(--ff-display); font-size: 3.2rem;
+      color: var(--g-accent); line-height: 1; margin-bottom: .45rem;
+    }
+    .stat-desc { font-size: .86rem; color: var(--c400); line-height: 1.55; }
+
+    .problem-list { display: flex; flex-direction: column; gap: .9rem; }
+    .problem-item {
+      display: flex; gap: 1rem; padding: 1.2rem 1.4rem;
+      background: var(--bg-card);
+      border-left: 3px solid var(--g-mid);
+      border-radius: 0 var(--r) var(--r) 0;
+      transition: border-color var(--t);
+    }
+    .problem-item:hover { border-left-color: var(--g-accent); }
+    .problem-icon { font-size: 1.15rem; flex-shrink: 0; margin-top: .1rem; }
+    .problem-text { font-size: .9rem; color: var(--c100); line-height: 1.6; }
+
+    /* ============================================================
+       SOLUÇÃO
+    ============================================================ */
+    .evi-formula-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2.2rem; margin-bottom: 2.5rem;
+      position: relative; overflow: hidden;
+    }
+    .evi-formula-box::after {
+      content: 'EVI';
+      position: absolute; right: -10px; bottom: -30px;
+      font-family: var(--ff-mono); font-size: 9rem; font-weight: bold;
+      color: rgba(82,183,136,.04); pointer-events: none; user-select: none;
+    }
+    .formula-label {
+      font-family: var(--ff-mono); font-size: .72rem;
+      letter-spacing: .18em; color: var(--c400);
+      text-transform: uppercase; margin-bottom: 1.3rem;
+    }
+    .formula-eq {
+      font-family: var(--ff-mono);
+      font-size: clamp(.68rem,1.4vw,.92rem);
+      color: var(--white); line-height: 2.2;
+      background: var(--bg-surface); padding: 1.4rem 1.6rem;
+      border-radius: var(--r); border: 1px solid rgba(82,183,136,.1);
+      margin-bottom: 2rem; overflow-x: auto;
+      white-space: nowrap;
+    }
+    .eq-g  { color: var(--g-accent); font-weight: bold; }
+    .eq-d  { color: var(--c400); }
+    .formula-components {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px,1fr));
+      gap: 1rem;
+    }
+    .fc {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.2rem;
+      transition: border-color var(--t);
+    }
+    .fc:hover { border-color: var(--border-b); }
+    .fc-w { font-family: var(--ff-mono); font-size: 1.5rem; color: var(--g-accent); font-weight: bold; margin-bottom: .2rem; }
+    .fc-n { font-size: .85rem; color: var(--white); margin-bottom: .4rem; font-weight: 600; }
+    .fc-d { font-size: .75rem; color: var(--c400); line-height: 1.5; }
+
+    .evi-scale {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+    }
+    .scale-label {
+      font-family: var(--ff-mono); font-size: .72rem;
+      letter-spacing: .14em; color: var(--c400);
+      text-transform: uppercase; margin-bottom: 1.3rem;
+    }
+    .scale-bar {
+      height: 10px; border-radius: 5px;
+      background: linear-gradient(90deg,#e63946 0%,#f4a261 25%,#e9c46a 50%,var(--g-mid) 75%,var(--g-accent) 100%);
+      margin-bottom: .5rem;
+    }
+    .scale-ticks {
+      display: flex; justify-content: space-between;
+      font-family: var(--ff-mono); font-size: .62rem; color: var(--c400);
+      margin-bottom: 1.5rem;
+    }
+    .scale-legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px,1fr));
+      gap: .65rem;
+    }
+    .sl {
+      display: flex; align-items: flex-start; gap: .5rem;
+      font-size: .78rem;
+    }
+    .sl-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0; margin-top: .3rem;
+    }
+    .sl-txt { color: var(--c400); }
+    .sl-txt strong { color: var(--white); }
+
+    /* ============================================================
+       ARQUITECTURA
+    ============================================================ */
+    #arquitectura { background: var(--bg-surface); }
+
+    .arch-flow {
+      display: flex; align-items: stretch; gap: 0;
+      margin-bottom: 3rem; overflow-x: auto; padding-bottom: 1rem;
+    }
+    .arch-step {
+      flex: 1; min-width: 130px;
+      display: flex; flex-direction: column;
+      align-items: center; position: relative;
+    }
+    .arch-step:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -10px; top: 38px;
+      color: var(--g-accent); font-size: 1.1rem; z-index: 1;
+    }
+    .arch-box {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.15rem .9rem;
+      text-align: center; width: 100%;
+      transition: border-color var(--t), transform var(--t);
+    }
+    .arch-step:hover .arch-box {
+      border-color: var(--border-b); transform: translateY(-4px);
+    }
+    .arch-icon  { font-size: 1.7rem; margin-bottom: .4rem; }
+    .arch-name  { font-size: .78rem; font-weight: 700; color: var(--white); margin-bottom: .2rem; }
+    .arch-tech  { font-family: var(--ff-mono); font-size: .6rem; color: var(--g-accent); }
+    .arch-desc  { font-size: .68rem; color: var(--c400); margin-top: .3rem; line-height: 1.4; }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(135px,1fr));
+      gap: 1rem;
+    }
+    .sc {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.4rem 1rem;
+      text-align: center;
+      transition: all var(--t);
+    }
+    .sc:hover {
+      border-color: var(--border-b); background: var(--bg-card-h);
+      transform: translateY(-4px);
+    }
+    .sc-icon { font-size: 1.9rem; margin-bottom: .65rem; }
+    .sc-name  { font-family: var(--ff-mono); font-size: .78rem; color: var(--white); font-weight: 700; margin-bottom: .2rem; }
+    .sc-role  { font-size: .68rem; color: var(--c400); }
+
+    /* ============================================================
+       BLOG / SEMANAS
+    ============================================================ */
+    .timeline {
+      display: flex; overflow-x: auto; padding-bottom: 1rem;
+      gap: 0; margin-bottom: 3rem;
+    }
+    .tl-item {
+      flex: 1; min-width: 150px;
+      padding: 0 1rem 0 0; position: relative;
+    }
+    .tl-item::before {
+      content: ''; position: absolute;
+      left: 6px; top: 5px; right: 0; height: 2px;
+      background: var(--g-deep);
+    }
+    .tl-item:last-child::before { display: none; }
+    .tl-item.active::before {
+      background: linear-gradient(90deg, var(--g-accent), var(--g-deep));
+    }
+    .tl-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--g-mid); border: 2px solid var(--bg-surface);
+      position: relative; z-index: 1; margin-bottom: .7rem;
+    }
+    .tl-item.active .tl-dot {
+      background: var(--g-accent);
+      box-shadow: 0 0 12px rgba(82,183,136,.5);
+    }
+    .tl-w { font-family: var(--ff-mono); font-size: .62rem; color: var(--g-accent); letter-spacing: .1em; margin-bottom: .2rem; }
+    .tl-p { font-size: .8rem; color: var(--white); font-weight: 600; margin-bottom: .15rem; }
+    .tl-d { font-size: .7rem; color: var(--c400); line-height: 1.4; }
+
+    .weeks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+      gap: 1.4rem;
+    }
+    .week-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+      transition: all var(--t); cursor: pointer;
+    }
+    .week-card:hover {
+      border-color: var(--border-b); transform: translateY(-4px);
+      box-shadow: 0 14px 44px rgba(0,0,0,.3);
+    }
+    .week-card.future {
+      opacity: .5; cursor: default;
+    }
+    .week-card.future:hover {
+      transform: none; box-shadow: none; border-color: var(--border);
+    }
+    .wc-hdr {
+      padding: 1.4rem 1.4rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: .8rem;
+    }
+    .wc-num {
+      font-family: var(--ff-mono); font-size: .62rem;
+      letter-spacing: .18em; color: var(--g-accent);
+      text-transform: uppercase; margin-bottom: .4rem;
+    }
+    .wc-title {
+      font-size: .95rem; font-weight: 700;
+      color: var(--white); line-height: 1.3;
+    }
+    .wc-badge {
+      background: rgba(82,183,136,.1); border: 1px solid rgba(82,183,136,.22);
+      color: var(--g-accent); padding: .18rem .55rem;
+      border-radius: 100px; font-family: var(--ff-mono);
+      font-size: .58rem; white-space: nowrap; flex-shrink: 0;
+    }
+    .wc-body { padding: 1.2rem 1.4rem; }
+    .wc-content {
+      font-size: .84rem; color: var(--c400);
+      line-height: 1.6; margin-bottom: .9rem;
+    }
+    .future-flag {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-family: var(--ff-mono); font-size: .65rem; color: var(--c600);
+      margin-bottom: .5rem;
+    }
+    .future-flag::before {
+      content: ''; width: 5px; height: 5px;
+      background: var(--c600); border-radius: 50%;
+    }
+    .wc-tags { display: flex; flex-wrap: wrap; gap: .38rem; }
+    .wc-tag {
+      font-family: var(--ff-mono); font-size: .58rem;
+      padding: .18rem .48rem;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      color: var(--c400); border-radius: 100px;
+    }
+
+    /* ============================================================
+       MODAL
+    ============================================================ */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(6,16,10,.88);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--bg-card); border: 1px solid var(--border-b);
+      border-radius: 16px; max-width: 680px; width: 100%;
+      max-height: 82vh; overflow-y: auto;
+    }
+    .modal-hdr {
+      padding: 1.8rem 1.8rem 1.3rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-start;
+      position: sticky; top: 0; background: var(--bg-card);
+      border-radius: 16px 16px 0 0;
+    }
+    .modal-close {
+      background: none; border: 1px solid var(--border);
+      color: var(--c400); cursor: pointer;
+      width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; transition: all var(--t); flex-shrink: 0;
+    }
+    .modal-close:hover { border-color: var(--g-accent); color: var(--g-accent); }
+    .modal-body { padding: 1.8rem; }
+    .modal-body h4 {
+      font-size: .72rem; color: var(--g-accent);
+      font-family: var(--ff-mono); letter-spacing: .12em;
+      text-transform: uppercase; margin: 1.4rem 0 .65rem;
+    }
+    .modal-body h4:first-child { margin-top: 0; }
+    .modal-body ul { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+    .modal-body li {
+      font-size: .85rem; color: var(--c100);
+      padding-left: 1.2rem; position: relative; line-height: 1.55;
+    }
+    .modal-body li::before { content: '—'; position: absolute; left: 0; color: var(--g-mid); }
+    .modal-body p { font-size: .85rem; color: var(--c100); line-height: 1.7; }
+    .modal-body strong { color: var(--white); }
+
+    /* ============================================================
+       EQUIPA
+    ============================================================ */
+    #equipa { background: var(--bg-surface); }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+      gap: 1.2rem; margin-bottom: 2.5rem;
+    }
+    .team-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.4rem;
+      text-align: center; transition: all var(--t);
+    }
+    .team-card:hover { border-color: var(--border-b); transform: translateY(-4px); }
+    .team-av {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--g-deep); border: 2px solid var(--border);
+      margin: 0 auto .9rem;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono); font-size: 1rem; color: var(--g-accent);
+    }
+    .team-role { font-size: .72rem; color: var(--c400); font-family: var(--ff-mono); }
+
+    .team-meta {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.8rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap: 1.5rem;
+    }
+    .tm-item { display: flex; align-items: flex-start; gap: .75rem; }
+    .tm-icon { font-size: 1.15rem; flex-shrink: 0; margin-top: .1rem; }
+    .tm-lbl { font-size: .7rem; color: var(--c400); font-family: var(--ff-mono); margin-bottom: .15rem; }
+    .tm-val { font-size: .88rem; color: var(--white); font-weight: 600; line-height: 1.4; }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      background: var(--bg); border-top: 1px solid var(--border);
+      padding: 2.8rem 0;
+    }
+    .footer-inner {
+      display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo {
+      font-family: var(--ff-mono); font-size: .82rem;
+      color: var(--g-accent); letter-spacing: .1em;
+    }
+    .footer-links { display: flex; gap: 1.4rem; list-style: none; flex-wrap: wrap; }
+    .footer-links a { font-size: .78rem; color: var(--c400); transition: color var(--t); }
+    .footer-links a:hover { color: var(--g-accent); }
+    .footer-badges { display: flex; gap: .4rem; flex-wrap: wrap; }
+    .footer-meta {
+      font-family: var(--ff-mono); font-size: .65rem; color: var(--c600);
+      text-align: center; margin-top: 1.8rem; padding-top: 1.8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ============================================================
+       TEAM NAMES
+    ============================================================ */
+    .team-name {
+      font-size: .88rem; font-weight: 700;
+      color: var(--white); margin-bottom: .2rem;
+    }
+
+    /* ============================================================
+       SCHEMA TABLE
+    ============================================================ */
+    #dados { background: var(--bg-surface); }
+
+    .schema-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+      gap: 1rem; margin-bottom: 2.5rem;
+    }
+    .schema-stat {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.1rem 1.3rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .schema-stat-num {
+      font-family: var(--ff-mono); font-size: 2rem;
+      color: var(--g-accent); font-weight: bold; line-height: 1; flex-shrink: 0;
+    }
+    .schema-stat-lbl { font-size: .78rem; color: var(--c400); line-height: 1.45; }
+    .schema-stat-lbl strong { color: var(--white); display: block; margin-bottom: .1rem; }
+
+    .schema-groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px,1fr));
+      gap: 1.1rem;
+    }
+    .sg {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); overflow: hidden;
+      transition: border-color var(--t);
+    }
+    .sg:hover { border-color: var(--border-b); }
+    .sg-hdr {
+      padding: .75rem 1.1rem;
+      background: rgba(26,58,34,.6);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: .55rem;
+    }
+    .sg-icon { font-size: .95rem; }
+    .sg-title {
+      font-family: var(--ff-mono); font-size: .68rem;
+      letter-spacing: .11em; color: var(--g-accent);
+      text-transform: uppercase;
+    }
+    .sg-count {
+      margin-left: auto; font-family: var(--ff-mono);
+      font-size: .6rem; color: var(--c600);
+    }
+    .sg-fields { padding: .85rem 1.1rem; display: flex; flex-direction: column; gap: .38rem; }
+    .sf { display: flex; align-items: baseline; gap: .55rem; }
+    .sf-name { font-family: var(--ff-mono); font-size: .7rem; color: var(--g-bright); white-space: nowrap; flex-shrink: 0; }
+    .sf-type { font-family: var(--ff-mono); font-size: .58rem; color: var(--c600); white-space: nowrap; flex-shrink: 0; }
+    .sf-desc { font-size: .7rem; color: var(--c400); line-height: 1.4; }
+
+    /* ============================================================
+       PIPELINE DIAGRAM (Batch + Real-Time + Medallion)
+    ============================================================ */
+    .pipeline-diagram { margin-bottom: 2.5rem; }
+    .pipeline-tracks  { display: flex; flex-direction: column; gap: 1rem; }
+    .pipeline-track   { display: grid; grid-template-columns: 88px 1fr; align-items: stretch; }
+    .track-label {
+      background: rgba(26,58,34,.7); border: 1px solid var(--border);
+      border-right: none; border-radius: var(--r) 0 0 var(--r);
+      display: flex; align-items: center; justify-content: center;
+      padding: .5rem;
+      writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);
+      font-family: var(--ff-mono); font-size: .6rem; letter-spacing: .12em;
+      color: var(--g-accent); text-transform: uppercase;
+    }
+    .track-label.rt { color: var(--g-bright); }
+    .track-steps {
+      display: flex; align-items: stretch;
+      border: 1px solid var(--border); border-radius: 0 var(--r) var(--r) 0; overflow: hidden;
+    }
+    .ts {
+      flex: 1; padding: .65rem .5rem; text-align: center;
+      border-right: 1px solid var(--border); position: relative;
+      transition: background var(--t);
+    }
+    .ts:last-child { border-right: none; }
+    .ts:hover { background: var(--bg-card-h); }
+    .ts::after {
+      content: '→'; position: absolute; right: -8px; top: 50%;
+      transform: translateY(-50%); color: var(--g-accent); font-size: .75rem; z-index: 1;
+    }
+    .ts:last-child::after { display: none; }
+    .ts-icon { font-size: 1rem; margin-bottom: .18rem; }
+    .ts-name { font-size: .62rem; font-weight: 700; color: var(--white); margin-bottom: .08rem; }
+    .ts-tech { font-family: var(--ff-mono); font-size: .52rem; color: var(--g-accent); }
+
+    .medallion { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 1.4rem; }
+    .medal { border-radius: var(--r); padding: 1.2rem; border: 1px solid var(--border); }
+    .medal-raw    { background: rgba(74,93,76,.15); }
+    .medal-silver { background: rgba(45,106,79,.15); }
+    .medal-gold   { background: rgba(82,183,136,.1);  }
+    .medal-tier { font-family: var(--ff-mono); font-size: .6rem; letter-spacing: .16em; text-transform: uppercase; margin-bottom: .35rem; }
+    .medal-raw    .medal-tier { color: #a0b0a2; }
+    .medal-silver .medal-tier { color: var(--g-bright); }
+    .medal-gold   .medal-tier { color: #ffd166; }
+    .medal-title { font-size: .88rem; font-weight: 700; color: var(--white); margin-bottom: .4rem; }
+    .medal-desc  { font-size: .73rem; color: var(--c400); line-height: 1.5; }
+    .medal-tags  { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .6rem; }
+    .medal-tag   { font-family: var(--ff-mono); font-size: .57rem; padding: .12rem .38rem; border-radius: 3px; }
+    .medal-raw    .medal-tag { background: rgba(160,176,162,.08); color: #a0b0a2; }
+    .medal-silver .medal-tag { background: rgba(116,198,157,.08); color: var(--g-bright); }
+    .medal-gold   .medal-tag { background: rgba(255,209,102,.08); color: #ffd166; }
+
+    @media (max-width: 640px) {
+      .medallion           { grid-template-columns: 1fr; }
+      .pipeline-track      { grid-template-columns: 1fr; }
+      .track-label         { writing-mode: horizontal-tb; transform: none; border-right: 1px solid var(--border); border-bottom: none; border-radius: var(--r) var(--r) 0 0; padding: .5rem 1rem; }
+      .track-steps         { border-radius: 0 0 var(--r) var(--r); flex-wrap: wrap; }
+      .ts::after           { display: none; }
+    }
+
+
+    /* ============================================================
+       ÍNDICE VERDE & ENERGY GAP
+    ============================================================ */
+    #indice-verde { background: var(--bg); }
+    #energy-gap   { background: var(--bg-surface); }
+
+    .ranking-bar-wrap {
+      display: flex; flex-direction: column; gap: .9rem; margin-bottom: 2rem;
+    }
+    .ranking-row {
+      display: grid; grid-template-columns: 160px 1fr 70px;
+      align-items: center; gap: 1rem;
+    }
+    .ranking-label {
+      font-size: .82rem; color: var(--white); font-weight: 600;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ranking-track {
+      height: 22px; background: var(--g-deep);
+      border-radius: 4px; overflow: hidden; position: relative;
+    }
+    .ranking-fill {
+      height: 100%; border-radius: 4px;
+      background: linear-gradient(90deg, var(--g-mid), var(--g-accent));
+      display: flex; align-items: center; padding-left: .5rem;
+      transition: width 1.2s cubic-bezier(.25,.8,.25,1);
+    }
+    .ranking-fill-inner {
+      font-family: var(--ff-mono); font-size: .62rem;
+      color: rgba(255,255,255,.85); font-weight: 700; white-space: nowrap;
+    }
+    .ranking-score {
+      font-family: var(--ff-mono); font-size: .88rem;
+      color: var(--g-accent); font-weight: bold; text-align: right;
+    }
+    .ranking-medal {
+      display: inline-block; width: 22px; height: 22px; border-radius: 50%;
+      line-height: 22px; text-align: center; font-size: .7rem;
+      margin-right: .5rem; flex-shrink: 0;
+    }
+    .medal-1 { background: #FFD700; color: #000; }
+    .medal-2 { background: #C0C0C0; color: #000; }
+    .medal-3 { background: #CD7F32; color: #fff; }
+    .medal-n { background: var(--g-deep); color: var(--c400); }
+
+    .iv-dims {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 1rem; margin-top: 2rem;
+    }
+    .iv-dim {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.1rem;
+    }
+    .iv-dim-icon { font-size: 1.4rem; margin-bottom: .4rem; }
+    .iv-dim-name { font-size: .82rem; font-weight: 700; color: var(--white); margin-bottom: .3rem; }
+    .iv-dim-desc { font-size: .72rem; color: var(--c400); line-height: 1.5; }
+
+    .gap-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+      gap: 1.1rem; margin-bottom: 2rem;
+    }
+    .gap-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.3rem; position: relative; overflow: hidden;
+      transition: border-color var(--t), transform var(--t);
+    }
+    .gap-card:hover { border-color: var(--border-b); transform: translateY(-3px); }
+    .gap-card-name {
+      font-size: .88rem; font-weight: 700; color: var(--white); margin-bottom: .3rem;
+    }
+    .gap-pct {
+      font-family: var(--ff-mono); font-size: 2.2rem; font-weight: bold;
+      line-height: 1; margin-bottom: .3rem;
+    }
+    .gap-pct.high  { color: #e63946; }
+    .gap-pct.mid   { color: #f4a261; }
+    .gap-pct.low   { color: var(--g-accent); }
+    .gap-label { font-size: .72rem; color: var(--c400); margin-bottom: .8rem; }
+    .gap-bar-bg {
+      height: 6px; background: var(--g-deep); border-radius: 3px; overflow: hidden;
+    }
+    .gap-bar-fill { height: 100%; border-radius: 3px; }
+    .gap-bar-fill.high  { background: linear-gradient(90deg,#c1121f,#e63946); }
+    .gap-bar-fill.mid   { background: linear-gradient(90deg,#e76f51,#f4a261); }
+    .gap-bar-fill.low   { background: linear-gradient(90deg,var(--g-mid),var(--g-accent)); }
+    .gap-note {
+      font-size: .7rem; color: var(--c600); font-family: var(--ff-mono);
+      margin-top: 1.5rem; font-style: italic;
+    }
+
+    @media (max-width: 480px) {
+      .ranking-row { grid-template-columns: 120px 1fr 55px; }
+    }
+
+    /* ============================================================
+       SCROLL FADE-IN
+    ============================================================ */
+    .fi {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .62s ease, transform .62s ease;
+    }
+    .fi.vis { opacity: 1; transform: translateY(0); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 860px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .evi-card   { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links  { display: none; }
+      .nav-links.open {
+        display: flex; flex-direction: column;
+        position: fixed; top: 56px; left: 0; right: 0;
+        background: var(--bg-surface); padding: 1rem 2rem;
+        border-bottom: 1px solid var(--border); gap: .9rem; z-index: 99;
+      }
+      .hamburger  { display: flex; }
+      .arch-flow  { flex-direction: column; }
+      .arch-step::after { display: none; }
+      section     { padding: 4rem 0; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-ctas  { flex-direction: column; }
+      .btn-primary,.btn-secondary { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVIGATION
+============================================================ -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">UrbanEco<span>.</span>Analytics</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#problema">Problema</a></li>
+        <li><a href="#solucao">Solução</a></li>
+        <li><a href="#arquitectura">Stack</a></li>
+        <li><a href="#dados">Dados</a></li>
+        <li><a href="#indice-verde">Índice Verde</a></li>
+        <li><a href="#energy-gap">Energy Gap</a></li>
+        <li><a href="#blog">Diário</a></li>
+        <li><a href="#equipa">Equipa</a></li>
+      </ul>
+      <a href="https://github.com/aavelarbelo/urbaneco-analytics" class="nav-cta" target="_blank" rel="noopener">GitHub ↗</a>
+      <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <!-- LEFT: Copy -->
+      <div>
+        <div class="hero-eyebrow">ODS 11 · Big Data · ISEP 2026 · Demo Day 27 Jun</div>
+        <h1 class="hero-title">Urban<em>Eco</em><br>Analytics</h1>
+        <p class="hero-tagline">"Transforming energy data into real estate intelligence."</p>
+        <p class="hero-desc">
+          <strong>2.776 imóveis analisados · 7 freguesias · EVI mediano 6.7/10</strong><br><br>
+          Em Portugal, a eficiência energética é invisível nas decisões de investimento imobiliário.
+          Estamos a mudar isso — com dados, com ciência, com o <strong>Energy Value Index</strong>.
+        </p>
+        <div class="hero-ctas">
+          <a href="#solucao" class="btn-primary">Ver Projecto →</a>
+          <a href="https://github.com/aavelarbelo/urbaneco-analytics" class="btn-secondary" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+        </div>
+        <div class="hero-badges">
+          <span class="badge badge-g">🌱 ODS 11</span>
+          <span class="badge">Python · pandas · statsmodels</span>
+          <span class="badge">PostgreSQL Aiven</span>
+          <span class="badge">Selenium</span>
+          <span class="badge">Power BI</span>
+          <span class="badge">GitHub Pages</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: EVI Live Card -->
+      <div class="evi-card">
+        <div class="evi-card-hdr">
+          <span class="evi-card-title">Energy Value Index™</span>
+          <span class="live-dot">LIVE DEMO</span>
+        </div>
+        <div class="evi-score">
+          <div class="evi-number" id="eviCounter">1.0</div>
+          <div class="evi-label">EVI SCORE (1–10) · ALDOAR/FOZ · T5 · Classe A · 2 582 €/m²</div>
+        </div>
+        <div class="evi-breakdown">
+          <div class="evi-row">
+            <span class="evi-row-lbl">Price Score</span>
+            <div class="evi-bar-bg"><div class="evi-bar" id="bar1"></div></div>
+            <span class="evi-row-val">8.2</span>
+          </div>
+          <div class="evi-row">
+            <span class="evi-row-lbl">Energy Score</span>
+            <div class="evi-bar-bg"><div class="evi-bar" id="bar2"></div></div>
+            <span class="evi-row-val">7.4</span>
+          </div>
+          <div class="evi-row">
+            <span class="evi-row-lbl">Índice Verde</span>
+            <div class="evi-bar-bg"><div class="evi-bar" id="bar3"></div></div>
+            <span class="evi-row-val">6.8</span>
+          </div>
+          <div class="evi-row">
+            <span class="evi-row-lbl">EVI Final</span>
+            <div class="evi-bar-bg"><div class="evi-bar" id="bar4"></div></div>
+            <span class="evi-row-val">7.7</span>
+          </div>
+        </div>
+        <div class="evi-card-ftr">
+          <div class="evi-prop">
+            Apartamento T3 · Bonfim, Porto<br>
+            <span style="color:rgba(116,198,157,.6);font-size:.6rem">⚠ Asking price — não escritura</span>
+          </div>
+          <span class="evi-class">EVI 7.7</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     PROBLEMA
+============================================================ -->
+<section id="problema">
+  <div class="container">
+    <div class="eyebrow fi">O Problema</div>
+    <h2 class="fi">Portugal tem um ponto cego<br>no mercado imobiliário</h2>
+    <p class="section-intro fi">
+      A eficiência energética dos imóveis é sistematicamente ignorada nas decisões de compra,
+      venda e investimento — apesar de representar um potencial de valorização de até 30%.
+    </p>
+
+    <div class="stats-grid">
+      <div class="stat-card fi">
+        <div class="stat-number">20–30%</div>
+        <p class="stat-desc">diferença de valorização entre classe A e D no mesmo concelho — ignorada pela maioria dos compradores e investidores</p>
+      </div>
+      <div class="stat-card fi">
+        <div class="stat-number">0</div>
+        <p class="stat-desc">plataformas em Portugal que cruzam dados de eficiência energética com valorização imobiliária de forma acessível e acionável</p>
+      </div>
+      <div class="stat-card fi">
+        <div class="stat-number">SCE</div>
+        <p class="stat-desc">regulamento europeu exige certificação energética em imóveis transacionados — os dados existem, mas não são explorados analiticamente</p>
+      </div>
+    </div>
+
+    <div class="problem-list">
+      <div class="problem-item fi">
+        <span class="problem-icon">📊</span>
+        <p class="problem-text">Os portais imobiliários mostram preço e área, mas não relacionam classe energética com potencial de valorização pós-reabilitação.</p>
+      </div>
+      <div class="problem-item fi">
+        <span class="problem-icon">🏗️</span>
+        <p class="problem-text">Investidores e proprietários tomam decisões de reabilitação sem dados quantitativos sobre o retorno energético-financeiro esperado.</p>
+      </div>
+      <div class="problem-item fi">
+        <span class="problem-icon">🗂️</span>
+        <p class="problem-text">Os dados existem dispersos — SCE, INE, Idealista, Câmaras Municipais — mas nunca foram integrados numa plataforma analítica unificada.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SOLUÇÃO
+============================================================ -->
+<section id="solucao">
+  <div class="container">
+
+    <!-- Honestidade Epistémica Banner -->
+    <div class="fi" style="background:rgba(82,183,136,.07);border:1px solid rgba(82,183,136,.25);border-radius:var(--r);padding:1rem 1.4rem;margin-bottom:3rem;display:flex;align-items:flex-start;gap:.9rem;">
+      <span style="font-size:1.1rem;flex-shrink:0">⚠️</span>
+      <div>
+        <div style="font-family:var(--ff-mono);font-size:.68rem;letter-spacing:.14em;color:var(--g-accent);text-transform:uppercase;margin-bottom:.3rem">Princípio da Honestidade Epistémica</div>
+        <p style="font-size:.84rem;color:var(--c100);line-height:1.6">Todos os valores deste sistema são <strong style="color:var(--white)">preços pedidos (asking prices)</strong> — anúncios de mercado — e não valores reais de transação ou escrituras. O sistema identifica prémios <em>percebidos</em>, tendências projetadas e expectativas de valorização, e não preços historicamente consolidados.</p>
+      </div>
+    </div>
+
+    <div class="eyebrow fi">A Solução</div>
+    <h2 class="fi">Energy Value Index</h2>
+    <p class="section-intro fi">
+      Métrica ponderada e normalizada de <strong style="color:var(--white)">1 a 10</strong> que pontua cada imóvel combinando duas dimensões: competitividade de preço face à mediana do segmento (Price Score) e peso da classe de eficiência energética (Energy Score).
+    </p>
+
+    <!-- Epistemic note -->
+    <div class="fi" style="background:rgba(255,209,102,.07);border:1px solid rgba(255,209,102,.3);border-radius:var(--r);padding:.8rem 1.2rem;margin-bottom:2rem;font-size:.82rem;color:#e9c46a;">
+      ⚠ <strong style="color:#ffd166">Asking prices</strong> — todos os preços são preços pedidos em anúncio, não valores de transação final ou escrituras.
+    </div>
+
+    <div class="evi-formula-box fi">
+      <div class="formula-label">// Fórmula EVI — Energy Value Index (escala 1–10)</div>
+      <div class="formula-eq">
+        <span class="eq-g">EVI</span><span class="eq-d"> = (</span><span class="eq-g">energy_score × 0.55</span><span class="eq-d"> + </span><span class="eq-g">price_score × 0.45</span><span class="eq-d">) × 9 + 1</span>
+      </div>
+      <div class="formula-components">
+        <div class="fc">
+          <div class="fc-w">Price Score</div>
+          <div class="fc-n">Competitividade de Preço</div>
+          <p class="fc-d">Desvio percentual do €/m² do imóvel face à <strong>mediana</strong> do seu segmento homólogo (freguesia + tipologia). Imóvel abaixo da mediana = score mais alto.</p>
+        </div>
+        <div class="fc">
+          <div class="fc-w">Energy Score</div>
+          <div class="fc-n">Eficiência Energética</div>
+          <p class="fc-d">Peso matemático atribuído à classe de certificação energética: A+ = 10, A = 9, B = 8, B- = 7, C = 5, D = 3, E = 2, F = 1.</p>
+        </div>
+        <div class="fc">
+          <div class="fc-w">Índice Verde</div>
+          <div class="fc-n">Sustentabilidade Local</div>
+          <p class="fc-d">Índice composto por freguesia: densidade de parques urbanos, estações de Metro, extensão de ciclovias e postos Mobi.E. Dados Open Data C.M. Porto.</p>
+        </div>
+        <div class="fc">
+          <div class="fc-w">n ≥ 3</div>
+          <div class="fc-n">Amostra Mínima</div>
+          <p class="fc-d">Cálculos e visualizações só são activados com pelo menos 3 imóveis no segmento. Mediana + P25/P75 — nunca média aritmética.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 Eixos -->
+    <div class="eyebrow fi" style="margin-top:3.5rem">Os 4 Eixos de Análise</div>
+    <h3 class="fi" style="font-family:var(--ff-body);font-size:1rem;font-weight:400;color:var(--c400);margin-bottom:2rem">Estratégia analítica integrada que extrai valor máximo dos dados recolhidos</h3>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.1rem;margin-bottom:3rem">
+      <div class="fi" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem">
+        <div style="font-family:var(--ff-mono);font-size:.62rem;color:var(--g-accent);letter-spacing:.14em;margin-bottom:.5rem">EIXO 1</div>
+        <div style="font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.5rem">Perfil de Mercado e Energia</div>
+        <p style="font-size:.78rem;color:var(--c400);line-height:1.55">Matriz Preço × Tipologia × Freguesia — mediana €/m², P25 e P75. Distribuição de classes energéticas por freguesia. Núcleo descritivo de referência.</p>
+      </div>
+      <div class="fi" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem">
+        <div style="font-family:var(--ff-mono);font-size:.62rem;color:var(--g-accent);letter-spacing:.14em;margin-bottom:.5rem">EIXO 2</div>
+        <div style="font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.5rem">Modelação Causal (Hedónica)</div>
+        <p style="font-size:.78rem;color:var(--c400);line-height:1.55">Regressão múltipla para isolar o prémio marginal por degrau energético (F→E→D→C→B→A). Define o teto de investimento racional por tipologia e freguesia.</p>
+      </div>
+      <div class="fi" style="background:var(--bg-card);border:1px solid rgba(82,183,136,.3);border-radius:var(--r);padding:1.4rem">
+        <div style="font-family:var(--ff-mono);font-size:.62rem;color:var(--g-accent);letter-spacing:.14em;margin-bottom:.5rem">EIXO 3</div>
+        <div style="font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.5rem">EVI Ranking — Foco ODS 11</div>
+        <p style="font-size:.78rem;color:var(--c400);line-height:1.55">Top 20 imóveis com melhor binómio preço-sustentabilidade. Dispersão Preço vs. EVI — eficiência energética fora do segmento de luxo extremo.</p>
+      </div>
+      <div class="fi" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem">
+        <div style="font-family:var(--ff-mono);font-size:.62rem;color:var(--g-accent);letter-spacing:.14em;margin-bottom:.5rem">EIXO 4</div>
+        <div style="font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.5rem">Oportunidades de Reabilitação</div>
+        <p style="font-size:.78rem;color:var(--c400);line-height:1.55">Energy Gap por freguesia: rácio ineficientes (C–F) vs eficientes (A–B). Matriz Preço Mediano × Gap — identifica onde a reabilitação tem maior retorno.</p>
+      </div>
+    </div>
+
+    <!-- Perguntas de Investigação -->
+    <div class="evi-scale fi">
+      <div class="scale-label">// Perguntas de Investigação</div>
+      <div style="display:flex;flex-direction:column;gap:.9rem;margin-top:1rem">
+        <div style="display:flex;gap:1rem;align-items:flex-start">
+          <span style="font-family:var(--ff-mono);font-size:.75rem;color:var(--g-accent);flex-shrink:0;margin-top:.1rem">Q1</span>
+          <p style="font-size:.85rem;color:var(--c100);line-height:1.6">Qual é a mediana real do €/m² para as diferentes tipologias habitacionais nas freguesias do Porto no início de 2026?</p>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start">
+          <span style="font-family:var(--ff-mono);font-size:.75rem;color:var(--g-accent);flex-shrink:0;margin-top:.1rem">Q2</span>
+          <p style="font-size:.85rem;color:var(--c100);line-height:1.6">Qual o ganho causal monetário (€/m²) gerado em cada degrau da escada de certificação energética, isolando a influência da área, dos extras e da localização?</p>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start">
+          <span style="font-family:var(--ff-mono);font-size:.75rem;color:var(--g-accent);flex-shrink:0;margin-top:.1rem">Q3</span>
+          <p style="font-size:.85rem;color:var(--c100);line-height:1.6">Quais os imóveis disponíveis no Porto com o score de eficiência e competitividade de preço mais otimizado (EVI 1–10)?</p>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:flex-start">
+          <span style="font-family:var(--ff-mono);font-size:.75rem;color:var(--g-accent);flex-shrink:0;margin-top:.1rem">Q4</span>
+          <p style="font-size:.85rem;color:var(--c100);line-height:1.6">Quais as freguesias do Porto com a assimetria mais acentuada entre stock habitacional ineficiente e ausência de frações certificadas — maior potencial de reabilitação?</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ARQUITECTURA
+============================================================ -->
+<section id="arquitectura">
+  <div class="container">
+    <div class="eyebrow fi">Arquitectura & Stack</div>
+    <h2 class="fi">Dois pipelines, uma plataforma</h2>
+    <p class="section-intro fi">Arquitectura Medallion (Raw → Silver → Gold) com dois pipelines paralelos — Batch para análise histórica e Real-Time para actualizações de mercado.</p>
+
+    <!-- Pipeline Diagram -->
+    <div class="pipeline-diagram fi">
+      <div style="font-family:var(--ff-mono);font-size:.7rem;letter-spacing:.15em;color:var(--c400);text-transform:uppercase;margin-bottom:1rem;">// Pipelines de Dados</div>
+      <div class="pipeline-tracks">
+
+        <!-- BATCH -->
+        <div class="pipeline-track">
+          <div class="track-label">Batch</div>
+          <div class="track-steps">
+            <div class="ts">
+              <div class="ts-icon">🗄️</div>
+              <div class="ts-name">Fontes</div>
+              <div class="ts-tech">SuperCasa · SCE · OSM</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🕷️</div>
+              <div class="ts-name">Scraper</div>
+              <div class="ts-tech">Python · BS4</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🗂️</div>
+              <div class="ts-name">RAW Layer</div>
+              <div class="ts-tech">CSV · PostgreSQL</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🔄</div>
+              <div class="ts-name">ETL / dbt</div>
+              <div class="ts-tech">Silver Layer</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🧮</div>
+              <div class="ts-name">EVI Engine</div>
+              <div class="ts-tech">Gold Layer</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">📊</div>
+              <div class="ts-name">Dashboard</div>
+              <div class="ts-tech">Streamlit · PBI</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REAL-TIME -->
+        <div class="pipeline-track">
+          <div class="track-label rt">Real-Time</div>
+          <div class="track-steps">
+            <div class="ts">
+              <div class="ts-icon">🌐</div>
+              <div class="ts-name">APIs Mercado</div>
+              <div class="ts-tech">Idealista · OLX</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">⚡</div>
+              <div class="ts-name">Ingestão</div>
+              <div class="ts-tech">PySpark Stream</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🗂️</div>
+              <div class="ts-name">RAW Layer</div>
+              <div class="ts-tech">Staging Tables</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🔄</div>
+              <div class="ts-name">Normalização</div>
+              <div class="ts-tech">Silver Layer</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🧮</div>
+              <div class="ts-name">EVI Δ Update</div>
+              <div class="ts-tech">Gold Layer</div>
+            </div>
+            <div class="ts">
+              <div class="ts-icon">🔔</div>
+              <div class="ts-name">Alertas</div>
+              <div class="ts-tech">Streamlit Live</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Medallion Architecture -->
+      <div class="medallion">
+        <div class="medal medal-raw">
+          <div class="medal-tier">⬜ Camada RAW</div>
+          <div class="medal-title">Dados Brutos</div>
+          <p class="medal-desc">Ingestão directa sem transformação. Fonte de verdade imutável — tudo o que foi recolhido, como foi recolhido.</p>
+          <div class="medal-tags">
+            <span class="medal-tag">CSV staging</span>
+            <span class="medal-tag">PostgreSQL raw</span>
+            <span class="medal-tag">2 776 imóveis válidos</span>
+          </div>
+        </div>
+        <div class="medal medal-silver">
+          <div class="medal-tier">🔘 Camada SILVER</div>
+          <div class="medal-title">Dados Limpos</div>
+          <p class="medal-desc">Dados validados, deduplicados e normalizados. Schema de 24 variáveis aplicado. Prontos para análise.</p>
+          <div class="medal-tags">
+            <span class="medal-tag">dbt models</span>
+            <span class="medal-tag">24 variáveis</span>
+            <span class="medal-tag">Geocodificação</span>
+          </div>
+        </div>
+        <div class="medal medal-gold">
+          <div class="medal-tier">🟡 Camada GOLD</div>
+          <div class="medal-title">Insights EVI</div>
+          <p class="medal-desc">EVI calculado por imóvel. Agregações por freguesia e concelho. Tabelas prontas para dashboard e relatórios.</p>
+          <div class="medal-tags">
+            <span class="medal-tag">EVI score</span>
+            <span class="medal-tag">Rankings</span>
+            <span class="medal-tag">Power BI ready</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-grid fi">
+      <div class="sc"><div class="sc-icon">🐍</div><div class="sc-name">Python</div><div class="sc-role">Core + ETL + EVI</div></div>
+      <div class="sc"><div class="sc-icon">⚡</div><div class="sc-name">PySpark</div><div class="sc-role">Processamento Big Data</div></div>
+      <div class="sc"><div class="sc-icon">🐘</div><div class="sc-name">PostgreSQL</div><div class="sc-role">Data Warehouse</div></div>
+      <div class="sc"><div class="sc-icon">🐳</div><div class="sc-name">Docker</div><div class="sc-role">Containerização</div></div>
+      <div class="sc"><div class="sc-icon">🔧</div><div class="sc-name">dbt</div><div class="sc-role">Transformação</div></div>
+      <div class="sc"><div class="sc-icon">📈</div><div class="sc-name">Streamlit</div><div class="sc-role">Dashboard Web</div></div>
+      <div class="sc"><div class="sc-icon">💡</div><div class="sc-name">Power BI</div><div class="sc-role">Analytics & Reports</div></div>
+      <div class="sc"><div class="sc-icon">🗂️</div><div class="sc-name">GitHub</div><div class="sc-role">Versioning & CI</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     SCHEMA DE DADOS
+============================================================ -->
+<section id="dados">
+  <div class="container">
+    <div class="eyebrow fi">Dataset</div>
+    <h2 class="fi">Schema de 24 variáveis</h2>
+    <p class="section-intro fi">Cada imóvel na base de dados é descrito por 24 campos obrigatórios — definidos e acordados pela equipa na Semana 1. Este schema é a espinha dorsal de todo o pipeline.</p>
+
+    <div class="schema-stats fi">
+      <div class="schema-stat">
+        <div class="schema-stat-num">24</div>
+        <div class="schema-stat-lbl"><strong>Variáveis por imóvel</strong>definidas e documentadas pela equipa</div>
+      </div>
+      <div class="schema-stat">
+        <div class="schema-stat-num">2 776</div>
+        <div class="schema-stat-lbl"><strong>Imóveis válidos recolhidos</strong>Porto, Junho 2026 — via SuperCasa (Selenium)</div>
+      </div>
+      <div class="schema-stat">
+        <div class="schema-stat-num">68%</div>
+        <div class="schema-stat-lbl"><strong>Taxa de preenchimento energético</strong>restantes a completar via SCE</div>
+      </div>
+      <div class="schema-stat">
+        <div class="schema-stat-num">5</div>
+        <div class="schema-stat-lbl"><strong>Grupos de campos</strong>Identificação, Localização, Características, Mercado, Energia</div>
+      </div>
+    </div>
+
+    <div class="schema-groups fi">
+
+      <div class="sg">
+        <div class="sg-hdr">
+          <span class="sg-icon">🔑</span>
+          <span class="sg-title">Identificação</span>
+          <span class="sg-count">4 campos</span>
+        </div>
+        <div class="sg-fields">
+          <div class="sf"><span class="sf-name">id</span><span class="sf-type">UUID</span><span class="sf-desc">Identificador único gerado no pipeline</span></div>
+          <div class="sf"><span class="sf-name">fonte</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Origem do registo (SuperCasa, SCE, OSM…)</span></div>
+          <div class="sf"><span class="sf-name">url</span><span class="sf-type">TEXT</span><span class="sf-desc">URL de origem para auditoria e re-scraping</span></div>
+          <div class="sf"><span class="sf-name">data_recolha</span><span class="sf-type">TIMESTAMP</span><span class="sf-desc">Data/hora exata de ingestão</span></div>
+        </div>
+      </div>
+
+      <div class="sg">
+        <div class="sg-hdr">
+          <span class="sg-icon">📍</span>
+          <span class="sg-title">Localização</span>
+          <span class="sg-count">6 campos</span>
+        </div>
+        <div class="sg-fields">
+          <div class="sf"><span class="sf-name">concelho</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Ex: Porto, Matosinhos, Maia</span></div>
+          <div class="sf"><span class="sf-name">freguesia</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Ex: Bonfim, Cedofeita, Paranhos</span></div>
+          <div class="sf"><span class="sf-name">rua</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Rua/artéria (quando disponível)</span></div>
+          <div class="sf"><span class="sf-name">latitude</span><span class="sf-type">FLOAT</span><span class="sf-desc">Coordenada geográfica (geocodificação)</span></div>
+          <div class="sf"><span class="sf-name">longitude</span><span class="sf-type">FLOAT</span><span class="sf-desc">Coordenada geográfica (geocodificação)</span></div>
+          <div class="sf"><span class="sf-name">codigo_postal</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Código postal 4+3</span></div>
+        </div>
+      </div>
+
+      <div class="sg">
+        <div class="sg-hdr">
+          <span class="sg-icon">🏠</span>
+          <span class="sg-title">Características</span>
+          <span class="sg-count">8 campos</span>
+        </div>
+        <div class="sg-fields">
+          <div class="sf"><span class="sf-name">tipologia</span><span class="sf-type">VARCHAR</span><span class="sf-desc">T0, T1, T2, T3, T4, T5+</span></div>
+          <div class="sf"><span class="sf-name">area_m2</span><span class="sf-type">FLOAT</span><span class="sf-desc">Área útil em metros quadrados</span></div>
+          <div class="sf"><span class="sf-name">ano_construcao</span><span class="sf-type">INT</span><span class="sf-desc">Ano de construção do imóvel</span></div>
+          <div class="sf"><span class="sf-name">num_divisoes</span><span class="sf-type">INT</span><span class="sf-desc">Número total de divisões</span></div>
+          <div class="sf"><span class="sf-name">num_wc</span><span class="sf-type">INT</span><span class="sf-desc">Número de casas de banho</span></div>
+          <div class="sf"><span class="sf-name">garagem</span><span class="sf-type">BOOLEAN</span><span class="sf-desc">Tem lugar de garagem incluído</span></div>
+          <div class="sf"><span class="sf-name">elevador</span><span class="sf-type">BOOLEAN</span><span class="sf-desc">Edifício com elevador</span></div>
+          <div class="sf"><span class="sf-name">estado_conservacao</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Novo / Bom / Médio / Para remodelação</span></div>
+        </div>
+      </div>
+
+      <div class="sg">
+        <div class="sg-hdr">
+          <span class="sg-icon">💶</span>
+          <span class="sg-title">Mercado</span>
+          <span class="sg-count">3 campos</span>
+        </div>
+        <div class="sg-fields">
+          <div class="sf"><span class="sf-name">preco_pedido</span><span class="sf-type">INT</span><span class="sf-desc">Preço de anúncio em euros</span></div>
+          <div class="sf"><span class="sf-name">preco_m2</span><span class="sf-type">FLOAT</span><span class="sf-desc">Calculado: preco_pedido / area_m2</span></div>
+          <div class="sf"><span class="sf-name">tempo_mercado_dias</span><span class="sf-type">INT</span><span class="sf-desc">Dias em anúncio (quando disponível)</span></div>
+        </div>
+      </div>
+
+      <div class="sg" style="border-color:rgba(82,183,136,.25)">
+        <div class="sg-hdr" style="background:rgba(82,183,136,.12)">
+          <span class="sg-icon">⚡</span>
+          <span class="sg-title" style="color:var(--g-bright)">Energia</span>
+          <span class="sg-count">3 campos</span>
+        </div>
+        <div class="sg-fields">
+          <div class="sf"><span class="sf-name">classe_energetica</span><span class="sf-type">CHAR</span><span class="sf-desc">A+, A, B, B-, C, D, E, F — campo central do EVI</span></div>
+          <div class="sf"><span class="sf-name">certificado_sce</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Número do certificado SCE (quando disponível)</span></div>
+          <div class="sf"><span class="sf-name">fonte_energia</span><span class="sf-type">VARCHAR</span><span class="sf-desc">Portal SCE, declaração anúncio ou estimativa</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ÍNDICE VERDE
+============================================================ -->
+<section id="indice-verde">
+  <div class="container">
+    <div class="eyebrow fi">Índice Verde</div>
+    <h2 class="fi">Ranking de Sustentabilidade por Freguesia</h2>
+    <p class="section-intro fi">
+      Índice composto calculado para as 7 freguesias analisadas, combinando
+      três dimensões: <strong style="color:var(--white)">Ambiente Verde</strong>
+      (parques urbanos e áreas verdes), <strong style="color:var(--white)">Mobilidade Sustentável</strong>
+      (estações de Metro e ciclovias) e <strong style="color:var(--white)">Equipamentos Sociais</strong>
+      (postos Mobi.E e infraestrutura de apoio). Fonte: Open Data C.M. Porto · OSM · Metro do Porto.
+    </p>
+
+    <!-- Ranking bars -->
+    <div class="ranking-bar-wrap fi">
+
+      <div class="ranking-row">
+        <div style="display:flex;align-items:center">
+          <span class="ranking-medal medal-1">1</span>
+          <span class="ranking-label">Foz / Nevogilde</span>
+        </div>
+        <div class="ranking-track">
+          <div class="ranking-fill" style="width:100%">
+            <span class="ranking-fill-inner">Ambiente Verde · Mobilidade · Equipamentos</span>
+          </div>
+        </div>
+        <div class="ranking-score">50.3</div>
+      </div>
+
+      <div class="ranking-row">
+        <div style="display:flex;align-items:center">
+          <span class="ranking-medal medal-2">2</span>
+          <span class="ranking-label">Centro Histórico</span>
+        </div>
+        <div class="ranking-track">
+          <div class="ranking-fill" style="width:89%">
+            <span class="ranking-fill-inner">Alta densidade de serviços</span>
+          </div>
+        </div>
+        <div class="ranking-score">44.8</div>
+      </div>
+
+      <div class="ranking-row">
+        <div style="display:flex;align-items:center">
+          <span class="ranking-medal medal-3">3</span>
+          <span class="ranking-label">Bonfim</span>
+        </div>
+        <div class="ranking-track">
+          <div class="ranking-fill" style="width:87%">
+            <span class="ranking-fill-inner">Boa mobilidade sustentável</span>
+          </div>
+        </div>
+        <div class="ranking-score">43.9</div>
+      </div>
+
+      <div class="ranking-row">
+        <div style="display:flex;align-items:center">
+          <span class="ranking-medal medal-n">4</span>
+          <span class="ranking-label">Paranhos</span>
+        </div>
+        <div class="ranking-track">
+          <div class="ranking-fill" style="width:87%">
+            <span class="ranking-fill-inner">Equipamentos e verde urbano</span>
+          </div>
+        </div>
+        <div class="ranking-score">43.8</div>
+      </div>
+
+      <div class="ranking-row">
+        <div style="display:flex;align-items:center">
+          <span class="ranking-medal medal-n">5</span>
+          <span class="ranking-label">Campanhã</span>
+        </div>
+        <div class="ranking-track">
+          <div class="ranking-fill" style="width:83%">
+            <span class="ranking-fill-inner">Potencial de crescimento verde</span>
+          </div>
+        </div>
+        <div class="ranking-score">42.0</div>
+      </div>
+
+      <div class="ranking-row">
+        <div style="display:flex;align-items:center">
+          <span class="ranking-medal medal-n">6</span>
+          <span class="ranking-label">Lordelo / Massarelos</span>
+        </div>
+        <div class="ranking-track">
+          <div class="ranking-fill" style="width:77%">
+            <span class="ranking-fill-inner">Mobilidade em desenvolvimento</span>
+          </div>
+        </div>
+        <div class="ranking-score">38.5</div>
+      </div>
+
+      <div class="ranking-row">
+        <div style="display:flex;align-items:center">
+          <span class="ranking-medal medal-n">7</span>
+          <span class="ranking-label">Ramalde</span>
+        </div>
+        <div class="ranking-track">
+          <div class="ranking-fill" style="width:73%">
+            <span class="ranking-fill-inner">Menor cobertura de infraestrutura verde</span>
+          </div>
+        </div>
+        <div class="ranking-score">36.8</div>
+      </div>
+
+    </div>
+
+    <!-- 3 Dimensões -->
+    <div class="iv-dims fi">
+      <div class="iv-dim">
+        <div class="iv-dim-icon">🌳</div>
+        <div class="iv-dim-name">Ambiente Verde</div>
+        <p class="iv-dim-desc">Densidade de parques urbanos e áreas verdes por km² de freguesia. Fonte: Open Data C.M. Porto e OpenStreetMap.</p>
+      </div>
+      <div class="iv-dim">
+        <div class="iv-dim-icon">🚇</div>
+        <div class="iv-dim-name">Mobilidade Sustentável</div>
+        <p class="iv-dim-desc">Número de estações de Metro activas e extensão de ciclovias (km) por freguesia. Fonte: Metro do Porto e C.M. Porto.</p>
+      </div>
+      <div class="iv-dim">
+        <div class="iv-dim-icon">⚡</div>
+        <div class="iv-dim-name">Equipamentos Sociais</div>
+        <p class="iv-dim-desc">Postos de carregamento eléctrico Mobi.E e infraestrutura de apoio à mobilidade urbana. Fonte: Rede Mobi.E.</p>
+      </div>
+    </div>
+
+    <p style="font-size:.72rem;color:var(--c600);font-family:var(--ff-mono);margin-top:1rem">
+      ⚠ Índice Verde é um indicador estático composto — não reflecte variações temporais.
+      Escala normalizada 0–100 com base nos dados disponíveis para as 7 freguesias analisadas.
+    </p>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ENERGY GAP
+============================================================ -->
+<section id="energy-gap">
+  <div class="container">
+    <div class="eyebrow fi">Energy Gap</div>
+    <h2 class="fi">Oportunidades de Reabilitação por Freguesia</h2>
+    <p class="section-intro fi">
+      Percentagem de imóveis com classe energética ineficiente (C–F) face ao total
+      com certificação disponível, por freguesia. Quanto maior o gap, maior o potencial
+      de reabilitação energética e retorno financeiro alinhado com o ODS 11.
+    </p>
+
+    <div class="gap-grid fi">
+
+      <div class="gap-card">
+        <div class="gap-card-name">Aldoar / Foz do Douro</div>
+        <div class="gap-pct high">40.1%</div>
+        <div class="gap-label">imóveis ineficientes (classes C–F)</div>
+        <div class="gap-bar-bg"><div class="gap-bar-fill high" style="width:100%"></div></div>
+        <p style="font-size:.72rem;color:var(--c400);margin-top:.6rem;line-height:1.5">
+          Zona com stock habitacional antigo e forte potencial de valorização pós-reabilitação.
+          Também lidera no EVI — paradoxo de oportunidade.
+        </p>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-name">Bonfim</div>
+        <div class="gap-pct high">40.0%</div>
+        <div class="gap-label">imóveis ineficientes (classes C–F)</div>
+        <div class="gap-bar-bg"><div class="gap-bar-fill high" style="width:99.8%"></div></div>
+        <p style="font-size:.72rem;color:var(--c400);margin-top:.6rem;line-height:1.5">
+          Bairro histórico com elevado volume de habitação pré-1980.
+          Alvo prioritário para programas municipais de reabilitação energética.
+        </p>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-name">Ramalde</div>
+        <div class="gap-pct high">37.0%</div>
+        <div class="gap-label">imóveis ineficientes (classes C–F)</div>
+        <div class="gap-bar-bg"><div class="gap-bar-fill high" style="width:92%"></div></div>
+        <p style="font-size:.72rem;color:var(--c400);margin-top:.6rem;line-height:1.5">
+          Freguesia periférica com mix habitacional heterogéneo.
+          Preço mediano mais acessível — reabilitação pode ter ROI elevado.
+        </p>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-name">Centro Histórico</div>
+        <div class="gap-pct mid">32.0%</div>
+        <div class="gap-label">imóveis ineficientes (classes C–F)</div>
+        <div class="gap-bar-bg"><div class="gap-bar-fill mid" style="width:80%"></div></div>
+        <p style="font-size:.72rem;color:var(--c400);margin-top:.6rem;line-height:1.5">
+          Centro já com processos de reabilitação activos.
+          Gap moderado mas stock muito procurado — prémio energético potencialmente elevado.
+        </p>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-name">Lordelo / Massarelos</div>
+        <div class="gap-pct mid">27.0%</div>
+        <div class="gap-label">imóveis ineficientes (classes C–F)</div>
+        <div class="gap-bar-bg"><div class="gap-bar-fill mid" style="width:67%"></div></div>
+        <p style="font-size:.72rem;color:var(--c400);margin-top:.6rem;line-height:1.5">
+          Zona de transição com mix de habitação nova e antiga.
+          Gap mais contido — mercado já mais equilibrado energeticamente.
+        </p>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-name">Paranhos</div>
+        <div class="gap-pct low">24.0%</div>
+        <div class="gap-label">imóveis ineficientes (classes C–F)</div>
+        <div class="gap-bar-bg"><div class="gap-bar-fill low" style="width:60%"></div></div>
+        <p style="font-size:.72rem;color:var(--c400);margin-top:.6rem;line-height:1.5">
+          Zona universitária com construção mais recente.
+          Menor urgência relativa — stock tendencialmente mais eficiente.
+        </p>
+      </div>
+
+      <div class="gap-card">
+        <div class="gap-card-name">Campanhã</div>
+        <div class="gap-pct low">19.0%</div>
+        <div class="gap-label">imóveis ineficientes (classes C–F)</div>
+        <div class="gap-bar-bg"><div class="gap-bar-fill low" style="width:47%"></div></div>
+        <p style="font-size:.72rem;color:var(--c400);margin-top:.6rem;line-height:1.5">
+          Menor Energy Gap das 7 freguesias. Zona com renovação urbana em curso
+          e proporção crescente de habitação certificada.
+        </p>
+      </div>
+
+    </div>
+
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem 1.4rem;margin-top:.5rem" class="fi">
+      <div style="font-family:var(--ff-mono);font-size:.68rem;color:var(--g-accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem">Interpretação — ODS 11</div>
+      <p style="font-size:.83rem;color:var(--c100);line-height:1.7">
+        Freguesias com <strong style="color:#e63946">Energy Gap elevado (≥35%)</strong> e preço mediano competitivo
+        representam as maiores oportunidades de <strong style="color:var(--white)">reabilitação inclusiva</strong>
+        alinhada ao ODS 11 — onde o investimento em eficiência energética pode gerar maior retorno social e financeiro.
+        Aldeamentos como Aldoar/Foz combinam Energy Gap alto com EVI top, confirmando o potencial do modelo.
+      </p>
+      <p style="font-size:.7rem;color:var(--c600);font-family:var(--ff-mono);margin-top:.7rem">
+        ⚠ Asking prices — preços pedidos em anúncio, não valores de transação final ou escrituras · Porto, Junho 2026
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     BLOG SEMANAL
+============================================================ -->
+<section id="blog">
+  <div class="container">
+    <div class="eyebrow fi">Diário do Projecto</div>
+    <h2 class="fi">Progresso semanal</h2>
+    <p class="section-intro fi">5 semanas, 5 fases de Design Thinking, 1 plataforma. Documentação semanal do progresso técnico e metodológico.</p>
+
+    <!-- Timeline -->
+    <div class="timeline fi">
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-w">WEEK 01</div>
+        <div class="tl-p">Empathize + Define</div>
+        <div class="tl-d">Setup, repositório, arquitectura</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-w">WEEK 02</div>
+        <div class="tl-p">Ideate</div>
+        <div class="tl-d">Scraping 2.776 imóveis</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-w">WEEK 03</div>
+        <div class="tl-p">Prototype</div>
+        <div class="tl-d">Pipeline, limpeza, EVI</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-w">WEEK 04</div>
+        <div class="tl-p">Test</div>
+        <div class="tl-d">Aiven, Índice Verde, Power BI</div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-w">WEEK 05</div>
+        <div class="tl-p">Demo Day 🚀</div>
+        <div class="tl-d">27 de Junho de 2026</div>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="weeks-grid">
+
+      <!-- WEEK 01 -->
+      <div class="week-card fi" onclick="openModal('m01')">
+        <div class="wc-hdr">
+          <div>
+            <div class="wc-num">Week 01 · Empathize + Define</div>
+            <div class="wc-title">Setup — Repositório, Arquitectura & Base de Dados</div>
+          </div>
+          <span class="wc-badge">✅ Concluída</span>
+        </div>
+        <div class="wc-body">
+          <p class="wc-content">Repositório GitHub criado, schema de 24 variáveis definido, docker-compose com PostgreSQL configurado, ambiente Python e estrutura de pastas acordada com a equipa. <strong style="color:var(--g-bright)">Clique para ler mais →</strong></p>
+          <div class="wc-tags">
+            <span class="wc-tag">GitHub</span><span class="wc-tag">PostgreSQL</span>
+            <span class="wc-tag">Python</span><span class="wc-tag">Docker</span>
+            <span class="wc-tag">Schema 24 vars</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEEK 02 -->
+      <div class="week-card fi">
+        <div class="wc-hdr">
+          <div>
+            <div class="wc-num">Week 02 · Ideate</div>
+            <div class="wc-title">Scraping SuperCasa — 2.776 Imóveis Recolhidos</div>
+          </div>
+          <span class="wc-badge">✅ Concluída</span>
+        </div>
+        <div class="wc-body">
+          <p class="wc-content">Scraper Selenium desenvolvido e executado sobre a SuperCasa.pt. Recolhidos <strong style="color:var(--g-bright)">2.776 imóveis válidos</strong> no concelho do Porto, cobrindo 7 freguesias. Dados carregados na camada RAW do PostgreSQL.</p>
+          <div class="wc-tags">
+            <span class="wc-tag">Selenium</span><span class="wc-tag">SuperCasa</span>
+            <span class="wc-tag">2.776 imóveis</span><span class="wc-tag">7 freguesias</span>
+            <span class="wc-tag">PostgreSQL RAW</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEEK 03 -->
+      <div class="week-card fi">
+        <div class="wc-hdr">
+          <div>
+            <div class="wc-num">Week 03 · Prototype</div>
+            <div class="wc-title">Pipeline, Limpeza & EVI Calculado</div>
+          </div>
+          <span class="wc-badge">✅ Concluída</span>
+        </div>
+        <div class="wc-body">
+          <p class="wc-content">Pipeline de limpeza com pandas: remoção de duplicados, normalização de tipologias e freguesias, cálculo de €/m². EVI calculado para <strong style="color:var(--g-bright)">2.615 imóveis</strong> — mediana 6.7/10. Mediana €/m² Porto: 5.057 €/m².</p>
+          <div class="wc-tags">
+            <span class="wc-tag">pandas</span><span class="wc-tag">EVI 6.7 mediana</span>
+            <span class="wc-tag">41 segmentos</span><span class="wc-tag">5.057 €/m²</span>
+            <span class="wc-tag">Asking prices</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEEK 04 -->
+      <div class="week-card fi">
+        <div class="wc-hdr">
+          <div>
+            <div class="wc-num">Week 04 · Test</div>
+            <div class="wc-title">Aiven Cloud, Índice Verde & Power BI</div>
+          </div>
+          <span class="wc-badge">✅ Concluída</span>
+        </div>
+        <div class="wc-body">
+          <p class="wc-content">Migração para <strong style="color:var(--g-bright)">PostgreSQL Aiven</strong> (cloud). Índice Verde calculado para 7 freguesias (Ambiente Verde, Mobilidade Sustentável, Equipamentos Sociais). Dashboard Power BI com 4 eixos analíticos.</p>
+          <div class="wc-tags">
+            <span class="wc-tag">Aiven Cloud</span><span class="wc-tag">Índice Verde</span>
+            <span class="wc-tag">Power BI</span><span class="wc-tag">4 Eixos</span>
+            <span class="wc-tag">statsmodels</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEEK 05 -->
+      <div class="week-card fi" style="border-color:rgba(82,183,136,.3);background:linear-gradient(135deg,var(--bg-card),rgba(26,58,34,.35))">
+        <div class="wc-hdr">
+          <div>
+            <div class="wc-num">Week 05 · Demo Day</div>
+            <div class="wc-title">🚀 Produto Final — Demo Day 27 Jun 2026</div>
+          </div>
+          <span class="wc-badge" style="background:rgba(82,183,136,.2);border-color:var(--g-accent)">🎯 Demo Day</span>
+        </div>
+        <div class="wc-body">
+          <p class="wc-content">Entrega final: 2.776 imóveis analisados, EVI calculado, dashboard Power BI com 4 eixos, site publicado, repositório completo. Pitch de apresentação com narrativa analítica para banca do ISEP.</p>
+          <div class="wc-tags">
+            <span class="wc-tag">Pitch</span><span class="wc-tag">Power BI</span>
+            <span class="wc-tag">GitHub Pages</span><span class="wc-tag">ODS 11</span>
+            <span class="wc-tag">ISEP 2026</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     EQUIPA
+============================================================ -->
+<section id="equipa">
+  <div class="container">
+    <div class="eyebrow fi">A Equipa</div>
+    <h2 class="fi">6 pessoas, 1 missão</h2>
+    <p class="section-intro fi">Equipa multidisciplinar de pós-graduação em Big Data no ISEP — Porto, Portugal.</p>
+
+    <div class="team-grid fi">
+      <div class="team-card">
+        <div class="team-av">MA</div>
+        <div class="team-name">Miguel</div>
+        <div class="team-role">Data Engineer</div>
+      </div>
+      <div class="team-card">
+        <div class="team-av">PB</div>
+        <div class="team-name">Pedro</div>
+        <div class="team-role">Dashboard Power BI</div>
+      </div>
+      <div class="team-card">
+        <div class="team-av">LC</div>
+        <div class="team-name">Luís</div>
+        <div class="team-role">Backend Dev</div>
+      </div>
+      <div class="team-card">
+        <div class="team-av">TS</div>
+        <div class="team-name">Tiago</div>
+        <div class="team-role">Analytics Dev</div>
+      </div>
+      <div class="team-card">
+        <div class="team-av">MR</div>
+        <div class="team-name">Mariana</div>
+        <div class="team-role">ML Engineer</div>
+      </div>
+      <div class="team-card">
+        <div class="team-av">AA</div>
+        <div class="team-name">Andressa</div>
+        <div class="team-role">DevOps / Infra</div>
+      </div>
+    </div>
+
+    <div class="team-meta fi">
+      <div class="tm-item">
+        <span class="tm-icon">🏛️</span>
+        <div>
+          <div class="tm-lbl">Instituição</div>
+          <div class="tm-val">ISEP — Instituto Superior de Engenharia do Porto</div>
+        </div>
+      </div>
+      <div class="tm-item">
+        <span class="tm-icon">📚</span>
+        <div>
+          <div class="tm-lbl">Programa</div>
+          <div class="tm-val">Pós-Graduação em Big Data</div>
+        </div>
+      </div>
+      <div class="tm-item">
+        <span class="tm-icon">🗓️</span>
+        <div>
+          <div class="tm-lbl">Demo Day</div>
+          <div class="tm-val">27 de Junho de 2026</div>
+        </div>
+      </div>
+      <div class="tm-item">
+        <span class="tm-icon">🌍</span>
+        <div>
+          <div class="tm-lbl">ODS</div>
+          <div class="tm-val">Objectivo 11 — Cidades e Comunidades Sustentáveis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">UrbanEco.Analytics</div>
+      <ul class="footer-links">
+        <li><a href="#problema">Problema</a></li>
+        <li><a href="#solucao">Solução</a></li>
+        <li><a href="#arquitectura">Stack</a></li>
+        <li><a href="#blog">Diário</a></li>
+        <li><a href="#equipa">Equipa</a></li>
+        <li><a href="https://github.com/aavelarbelo/urbaneco-analytics" target="_blank" rel="noopener">GitHub ↗</a></li>
+      </ul>
+      <div class="footer-badges">
+        <span class="badge badge-g">🌱 ODS 11</span>
+        <span class="badge">ISEP</span>
+        <span class="badge">Big Data</span>
+        <span class="badge">2026</span>
+      </div>
+    </div>
+    <div class="footer-meta">
+      © 2026 UrbanEco Analytics · ISEP Pós-Graduação Big Data · ODS 11 — Cidades e Comunidades Sustentáveis<br>2.776 imóveis · 7 freguesias · EVI mediano 6.7 · Mediana 5.057 €/m² · Asking prices<br>
+      <span style="opacity:.5">Energy Value Index™ é uma métrica desenvolvida no âmbito deste projecto académico.</span>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ============================================================
+     MODAL — WEEK 01
+============================================================ -->
+<div class="modal-overlay" id="m01" onclick="closeOutside(event,'m01')">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div>
+        <div class="wc-num" style="margin-bottom:.3rem">Week 01 · Empathize + Define</div>
+        <h3 style="color:var(--white)">Fundações — Repositório, Dados e Arquitectura</h3>
+      </div>
+      <button class="modal-close" onclick="closeModal('m01')" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <h4>// Repositório GitHub</h4>
+      <ul>
+        <li>Repositório <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">urbaneco-analytics</code> criado e partilhado com os 6 elementos da equipa</li>
+        <li>Estrutura: <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">src/ data/raw/ data/silver/ data/gold/ notebooks/ docs/ scraper/ infra/</code></li>
+        <li>Ambiente virtual Python; <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">requirements.txt</code> fixado e <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">.env.example</code> documentado — credenciais nunca commitadas</li>
+        <li>Branch strategy: <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">main</code> protegida, feature branches com pull requests obrigatórios</li>
+      </ul>
+
+      <h4>// Infraestrutura — docker-compose</h4>
+      <ul>
+        <li><code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">docker-compose.yml</code> com PostgreSQL 15 + pgAdmin; volumes persistentes configurados</li>
+        <li>Variáveis de ambiente injectadas via <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">.env</code> — porta, credenciais, db name</li>
+        <li>Conectividade Python → PostgreSQL validada com <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">psycopg2</code>: INSERT e SELECT confirmados</li>
+      </ul>
+
+      <h4>// Schema de 24 variáveis</h4>
+      <p>Schema completo com <strong>24 campos obrigatórios</strong> em 5 grupos acordados pela equipa:</p>
+      <ul>
+        <li><strong>Identificação (4):</strong> id, fonte, url, data_recolha</li>
+        <li><strong>Localização (6):</strong> concelho, freguesia, rua, latitude, longitude, codigo_postal</li>
+        <li><strong>Características (8):</strong> tipologia, area_m2, ano_construcao, num_divisoes, num_wc, garagem, elevador, estado_conservacao</li>
+        <li><strong>Mercado (3):</strong> preco_pedido, preco_m2 (calculado), tempo_mercado_dias</li>
+        <li><strong>Energia (3):</strong> classe_energetica, certificado_sce, fonte_energia — campos centrais do EVI</li>
+      </ul>
+
+      <h4>// 5 001 Registos Reais — SuperCasa · Porto · Junho 2026</h4>
+      <p>Scraper Selenium desenvolvido em Python recolheu dados da plataforma <strong>SuperCasa</strong>. Dataset final do projecto: <strong>2 776 imóveis válidos</strong> (imóveis residenciais para venda no concelho do Porto):</p>
+      <ul>
+        <li>Scraper com ChromeDriver via <code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">webdriver_manager</code> — paginação automática até 250 páginas</li>
+        <li>Pipeline: SuperCasa → CSV staging → validação schema → PostgreSQL camada RAW</li>
+        <li>Mediana €/m² Porto (dados finais): <strong>5 057 €/m²</strong> · Asking prices, não escrituras</li>
+        <li>Tipologias: T1 (2 045), T2 (1 425), T3 (1 266), T4 (676), T0 (154), T5 (35)</li>
+        <li>Freguesias analisadas (7): Aldoar/Foz, Bonfim, Campanhã, Centro Histórico, Lordelo/Massarelos, Paranhos, Ramalde</li>
+        <li><code style="font-family:var(--ff-mono);font-size:.8rem;color:var(--g-accent)">energy_class</code>: 100% nulo nos anúncios — mantido como NaN; fonte SCE a integrar na Semana 2</li>
+      </ul>
+      <p style="margin-top:.75rem;font-size:.78rem;color:var(--c400)">⚠ Todos os valores são <strong style="color:var(--white)">asking prices</strong> — preços pedidos em anúncio, não valores de escritura.</p>
+
+      <div class="wc-tags" style="margin-top:1.4rem">
+        <span class="wc-tag">GitHub</span><span class="wc-tag">docker-compose</span><span class="wc-tag">PostgreSQL</span>
+        <span class="wc-tag">Python</span><span class="wc-tag">Selenium</span><span class="wc-tag">SuperCasa</span>
+        <span class="wc-tag">5 001 registos</span><span class="wc-tag">Schema 24 vars</span><span class="wc-tag">Asking prices</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  /* ---- EVI counter animation ---- */
+  (function() {
+    var el = document.getElementById('eviCounter');
+    var target = 8.6, dur = 2200, start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = (1 + ease * (target - 1)).toFixed(1);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    setTimeout(function(){ requestAnimationFrame(step); }, 700);
+  })();
+
+  /* ---- EVI bars animation ---- */
+  (function() {
+    var bars = [
+      { id: 'bar1', w: '82%', delay: 900 },
+      { id: 'bar2', w: '74%', delay: 1100 },
+      { id: 'bar3', w: '68%', delay: 1300 },
+      { id: 'bar4', w: '77%', delay: 1500 }
+    ];
+    bars.forEach(function(b) {
+      setTimeout(function(){
+        var el = document.getElementById(b.id);
+        if (el) el.style.width = b.w;
+      }, b.delay);
+    });
+  })();
+
+  /* ---- Scroll fade-in ---- */
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var el = entry.target;
+        var delay = parseInt(el.getAttribute('data-delay') || '0', 10);
+        setTimeout(function(){ el.classList.add('vis'); }, delay);
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.fi').forEach(function(el, i) {
+    var sibs = el.parentElement.querySelectorAll('.fi');
+    var idx  = Array.prototype.indexOf.call(sibs, el);
+    el.setAttribute('data-delay', idx * 70);
+    observer.observe(el);
+  });
+
+  /* ---- Mobile menu ---- */
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+  document.querySelectorAll('.nav-links a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      document.getElementById('navLinks').classList.remove('open');
+    });
+  });
+
+  /* ---- Modal ---- */
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function closeOutside(e, id) {
+    if (e.target === document.getElementById(id)) closeModal(id);
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.open').forEach(function(m) {
+        m.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    }
+  });
+
+  /* ---- Active nav highlighting ---- */
+  var sections  = document.querySelectorAll('section[id]');
+  var navLinks  = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', function() {
+    var cur = '';
+    sections.forEach(function(s) {
+      if (window.scrollY >= s.offsetTop - 120) cur = s.id;
+    });
+    navLinks.forEach(function(a) {
+      a.style.color = (a.getAttribute('href') === '#' + cur)
+        ? 'var(--g-accent)' : '';
+    });
+  }, { passive: true });
+</script>
+
+</body>
+</html>
