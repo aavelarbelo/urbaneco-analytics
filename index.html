@@ -903,6 +903,234 @@
       .ranking-row { grid-template-columns: 120px 1fr 55px; }
     }
 
+
+    /* ============================================================
+       ROADMAP
+    ============================================================ */
+    #roadmap { background: var(--bg); }
+
+    /* Accordion week cards */
+    .rm-week {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; margin-bottom: 10px; overflow: hidden;
+      transition: border-color var(--t);
+    }
+    .rm-week.open { border-color: var(--border-b); }
+
+    .rm-week-hdr {
+      width: 100%; background: transparent; border: none;
+      cursor: pointer; padding: 0; text-align: left;
+      display: block;
+    }
+    .rm-week-hdr:hover .rm-week-hdr-inner { background: var(--bg-card-h); }
+    .rm-week-hdr-inner {
+      display: flex; align-items: center;
+      padding: 1rem 1.3rem; gap: 1rem;
+      transition: background var(--t);
+    }
+    .rm-wk-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--rm-color);
+      background: var(--rm-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono); font-size: .68rem;
+      color: var(--rm-color); font-weight: 700; flex-shrink: 0;
+    }
+    .rm-wk-info { flex: 1; }
+    .rm-wk-code {
+      font-family: var(--ff-mono); font-size: .62rem;
+      letter-spacing: .14em; color: var(--rm-color);
+      text-transform: uppercase; margin-bottom: .18rem;
+    }
+    .rm-wk-title {
+      font-size: .95rem; font-weight: 700;
+      color: var(--white); margin-bottom: .15rem;
+    }
+    .rm-wk-dates {
+      font-size: .72rem; color: var(--c400);
+      font-family: var(--ff-mono);
+    }
+    .rm-wk-prog {
+      display: flex; align-items: center;
+      gap: .6rem; flex-shrink: 0;
+    }
+    .rm-prog-ring {
+      width: 36px; height: 36px; position: relative;
+    }
+    .rm-prog-ring svg { transform: rotate(-90deg); }
+    .rm-prog-pct {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono); font-size: .58rem;
+      color: var(--rm-color); font-weight: 700;
+    }
+    .rm-chevron {
+      font-size: .8rem; color: var(--c400);
+      transition: transform .2s; flex-shrink: 0;
+    }
+    .rm-week.open .rm-chevron { transform: rotate(180deg); }
+
+    .rm-week-body {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 1.2rem 1.3rem 1.4rem;
+    }
+    .rm-week.open .rm-week-body { display: block; }
+
+    .rm-objective {
+      background: var(--rm-bg); border-left: 3px solid var(--rm-color);
+      border-radius: 0 var(--r) var(--r) 0;
+      padding: .8rem 1rem; margin-bottom: 1.2rem;
+      font-size: .83rem; color: var(--c100); line-height: 1.6;
+    }
+
+    /* Task rows inside week */
+    .rm-task {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--r); margin-bottom: .6rem; overflow: hidden;
+    }
+    .rm-task-hdr {
+      width: 100%; background: transparent; border: none;
+      cursor: pointer; padding: .75rem 1rem;
+      display: flex; align-items: center; gap: .7rem;
+      flex-wrap: wrap; text-align: left;
+      transition: background var(--t);
+    }
+    .rm-task-hdr:hover { background: rgba(255,255,255,.02); }
+    .rm-task-id {
+      font-family: var(--ff-mono); font-size: .6rem;
+      color: var(--rm-color); font-weight: 700; min-width: 26px;
+    }
+    .rm-task-title {
+      flex: 1; font-size: .83rem; font-weight: 600;
+      color: var(--white); min-width: 120px; line-height: 1.3;
+    }
+    .rm-person-badge {
+      font-family: var(--ff-mono); font-size: .6rem;
+      padding: .2rem .6rem; border-radius: 100px;
+      background: rgba(82,183,136,.1);
+      border: 1px solid rgba(82,183,136,.25);
+      color: var(--g-accent); white-space: nowrap; cursor: pointer;
+      transition: all var(--t);
+    }
+    .rm-person-badge:hover {
+      background: rgba(82,183,136,.2);
+      border-color: var(--g-accent);
+    }
+    .rm-axis-badge {
+      font-family: var(--ff-mono); font-size: .58rem;
+      padding: .18rem .5rem; border-radius: 100px;
+      background: rgba(91,33,182,.12);
+      border: 1px solid rgba(91,33,182,.25);
+      color: #a78bfa; white-space: nowrap;
+    }
+    .rm-confirmar {
+      font-family: var(--ff-mono); font-size: .58rem;
+      padding: .18rem .5rem; border-radius: 100px;
+      background: rgba(251,146,60,.1);
+      border: 1px solid rgba(251,146,60,.25);
+      color: #fb923c; white-space: nowrap;
+    }
+    .rm-chevron-sm {
+      font-size: .65rem; color: var(--c400);
+      transition: transform .2s; flex-shrink: 0;
+    }
+    .rm-task.open .rm-chevron-sm { transform: rotate(180deg); }
+    .rm-task-body {
+      display: none; padding: .9rem 1rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .rm-task.open .rm-task-body { display: block; }
+
+    .rm-field-label {
+      font-family: var(--ff-mono); font-size: .62rem;
+      letter-spacing: .1em; color: var(--c400);
+      text-transform: uppercase; margin: .8rem 0 .3rem;
+    }
+    .rm-field-label:first-child { margin-top: 0; }
+    .rm-field-text {
+      font-size: .8rem; color: var(--c100); line-height: 1.65;
+    }
+    .rm-deliverable {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-family: var(--ff-mono); font-size: .65rem;
+      background: var(--bg-card); border: 1px solid var(--border-b);
+      color: var(--g-accent); padding: .22rem .6rem;
+      border-radius: 4px; margin: .2rem .3rem .2rem 0;
+    }
+    .rm-note {
+      background: rgba(255,209,102,.06); border: 1px solid rgba(255,209,102,.2);
+      border-radius: 6px; padding: .6rem .9rem; margin-top: .8rem;
+      font-size: .75rem; color: #fbbf24; line-height: 1.5;
+    }
+
+    /* Person modals */
+    .person-modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(6,16,10,.9);
+      backdrop-filter: blur(12px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .person-modal-overlay.open { display: flex; }
+    .person-modal {
+      background: var(--bg-card); border: 1px solid var(--border-b);
+      border-radius: 16px; max-width: 620px; width: 100%;
+      max-height: 82vh; overflow-y: auto;
+    }
+    .pm-hdr {
+      padding: 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      position: sticky; top: 0; background: var(--bg-card);
+      border-radius: 16px 16px 0 0;
+    }
+    .pm-av {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--g-deep); border: 2px solid var(--border-b);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono); font-size: .9rem;
+      color: var(--g-accent); font-weight: 700; flex-shrink: 0;
+      margin-right: 1rem;
+    }
+    .pm-name { font-size: 1.1rem; font-weight: 700; color: var(--white); }
+    .pm-role { font-family: var(--ff-mono); font-size: .72rem; color: var(--g-accent); margin-top: .15rem; }
+    .pm-close {
+      background: none; border: 1px solid var(--border);
+      color: var(--c400); cursor: pointer;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; transition: all var(--t); flex-shrink: 0;
+    }
+    .pm-close:hover { border-color: var(--g-accent); color: var(--g-accent); }
+    .pm-body { padding: 1.4rem; }
+    .pm-section-title {
+      font-family: var(--ff-mono); font-size: .65rem;
+      letter-spacing: .12em; color: var(--g-accent);
+      text-transform: uppercase; margin: 1.2rem 0 .6rem;
+    }
+    .pm-section-title:first-child { margin-top: 0; }
+    .pm-contrib-item {
+      display: flex; gap: .75rem; padding: .65rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pm-contrib-item:last-child { border-bottom: none; }
+    .pm-contrib-week {
+      font-family: var(--ff-mono); font-size: .6rem;
+      color: var(--g-accent); min-width: 50px; padding-top: .12rem;
+    }
+    .pm-contrib-text { font-size: .8rem; color: var(--c100); line-height: 1.55; }
+    .pm-contrib-del { font-size: .72rem; color: var(--c400); margin-top: .25rem; }
+
+    /* Team card clickable */
+    .team-card { cursor: pointer; }
+    .team-card::after {
+      content: 'ver contribuições →';
+      display: block; font-family: var(--ff-mono);
+      font-size: .58rem; color: var(--g-accent);
+      margin-top: .5rem; opacity: 0; transition: opacity var(--t);
+    }
+    .team-card:hover::after { opacity: 1; }
+
     /* ============================================================
        SCROLL FADE-IN
     ============================================================ */
@@ -956,7 +1184,7 @@
         <li><a href="#dados">Dados</a></li>
         <li><a href="#indice-verde">Índice Verde</a></li>
         <li><a href="#energy-gap">Energy Gap</a></li>
-        <li><a href="#blog">Diário</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#equipa">Equipa</a></li>
       </ul>
       <a href="https://github.com/aavelarbelo/urbaneco-analytics" class="nav-cta" target="_blank" rel="noopener">GitHub ↗</a>
@@ -1701,147 +1929,40 @@
 
 
 <!-- ============================================================
-     BLOG SEMANAL
+     ROADMAP
 ============================================================ -->
-<section id="blog">
+<section id="roadmap">
   <div class="container">
-    <div class="eyebrow fi">Diário do Projecto</div>
-    <h2 class="fi">Progresso semanal</h2>
-    <p class="section-intro fi">5 semanas, 5 fases de Design Thinking, 1 plataforma. Documentação semanal do progresso técnico e metodológico.</p>
+    <div class="eyebrow fi">Roadmap do Projecto</div>
+    <h2 class="fi">5 semanas · 6 pessoas · 1 produto</h2>
+    <p class="section-intro fi">
+      Clica em cada semana para ver o que foi feito, por quem,
+      com que objectivo e quais os artefactos produzidos.
+      Cada badge de pessoa abre o perfil de contribuição individual.
+    </p>
 
-    <!-- Timeline -->
-    <div class="timeline fi">
-      <div class="tl-item active">
-        <div class="tl-dot"></div>
-        <div class="tl-w">WEEK 01</div>
-        <div class="tl-p">Empathize + Define</div>
-        <div class="tl-d">Setup, repositório, arquitectura</div>
-      </div>
-      <div class="tl-item active">
-        <div class="tl-dot"></div>
-        <div class="tl-w">WEEK 02</div>
-        <div class="tl-p">Ideate</div>
-        <div class="tl-d">Scraping 2.776 imóveis</div>
-      </div>
-      <div class="tl-item active">
-        <div class="tl-dot"></div>
-        <div class="tl-w">WEEK 03</div>
-        <div class="tl-p">Prototype</div>
-        <div class="tl-d">Pipeline, limpeza, EVI</div>
-      </div>
-      <div class="tl-item active">
-        <div class="tl-dot"></div>
-        <div class="tl-w">WEEK 04</div>
-        <div class="tl-p">Test</div>
-        <div class="tl-d">Aiven, Índice Verde, Power BI</div>
-      </div>
-      <div class="tl-item active">
-        <div class="tl-dot"></div>
-        <div class="tl-w">WEEK 05</div>
-        <div class="tl-p">Demo Day 🚀</div>
-        <div class="tl-d">27 de Junho de 2026</div>
-      </div>
+    <!-- Timeline strip -->
+    <div class="timeline fi" style="margin-bottom:2rem">
+      <div class="tl-item active"><div class="tl-dot"></div>
+        <div class="tl-w">SEM 1</div><div class="tl-p">Fundações</div>
+        <div class="tl-d">29 Mai — 4 Jun</div></div>
+      <div class="tl-item active"><div class="tl-dot"></div>
+        <div class="tl-w">SEM 2</div><div class="tl-p">Scraping</div>
+        <div class="tl-d">5 Jun — 11 Jun</div></div>
+      <div class="tl-item active"><div class="tl-dot"></div>
+        <div class="tl-w">SEM 3</div><div class="tl-p">Pipeline & EVI</div>
+        <div class="tl-d">12 Jun — 18 Jun</div></div>
+      <div class="tl-item active"><div class="tl-dot"></div>
+        <div class="tl-w">SEM 4</div><div class="tl-p">Cloud & Power BI</div>
+        <div class="tl-d">19 Jun — 25 Jun</div></div>
+      <div class="tl-item active"><div class="tl-dot"></div>
+        <div class="tl-w">SEM 5</div><div class="tl-p">Demo Day 🚀</div>
+        <div class="tl-d">27 Jun · ISEP</div></div>
     </div>
 
-    <!-- Cards -->
-    <div class="weeks-grid">
+    <!-- Accordion weeks rendered by JS -->
+    <div id="rm-weeks" class="fi"></div>
 
-      <!-- WEEK 01 -->
-      <div class="week-card fi" onclick="openModal('m01')">
-        <div class="wc-hdr">
-          <div>
-            <div class="wc-num">Week 01 · Empathize + Define</div>
-            <div class="wc-title">Setup — Repositório, Arquitectura & Base de Dados</div>
-          </div>
-          <span class="wc-badge">✅ Concluída</span>
-        </div>
-        <div class="wc-body">
-          <p class="wc-content">Repositório GitHub criado, schema de 24 variáveis definido, docker-compose com PostgreSQL configurado, ambiente Python e estrutura de pastas acordada com a equipa. <strong style="color:var(--g-bright)">Clique para ler mais →</strong></p>
-          <div class="wc-tags">
-            <span class="wc-tag">GitHub</span><span class="wc-tag">PostgreSQL</span>
-            <span class="wc-tag">Python</span><span class="wc-tag">Docker</span>
-            <span class="wc-tag">Schema 24 vars</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- WEEK 02 -->
-      <div class="week-card fi">
-        <div class="wc-hdr">
-          <div>
-            <div class="wc-num">Week 02 · Ideate</div>
-            <div class="wc-title">Scraping SuperCasa — 2.776 Imóveis Recolhidos</div>
-          </div>
-          <span class="wc-badge">✅ Concluída</span>
-        </div>
-        <div class="wc-body">
-          <p class="wc-content">Scraper Selenium desenvolvido e executado sobre a SuperCasa.pt. Recolhidos <strong style="color:var(--g-bright)">2.776 imóveis válidos</strong> no concelho do Porto, cobrindo 7 freguesias. Dados carregados na camada RAW do PostgreSQL.</p>
-          <div class="wc-tags">
-            <span class="wc-tag">Selenium</span><span class="wc-tag">SuperCasa</span>
-            <span class="wc-tag">2.776 imóveis</span><span class="wc-tag">7 freguesias</span>
-            <span class="wc-tag">PostgreSQL RAW</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- WEEK 03 -->
-      <div class="week-card fi">
-        <div class="wc-hdr">
-          <div>
-            <div class="wc-num">Week 03 · Prototype</div>
-            <div class="wc-title">Pipeline, Limpeza & EVI Calculado</div>
-          </div>
-          <span class="wc-badge">✅ Concluída</span>
-        </div>
-        <div class="wc-body">
-          <p class="wc-content">Pipeline de limpeza com pandas: remoção de duplicados, normalização de tipologias e freguesias, cálculo de €/m². EVI calculado para <strong style="color:var(--g-bright)">2.615 imóveis</strong> — mediana 6.7/10. Mediana €/m² Porto: 5.057 €/m².</p>
-          <div class="wc-tags">
-            <span class="wc-tag">pandas</span><span class="wc-tag">EVI 6.7 mediana</span>
-            <span class="wc-tag">41 segmentos</span><span class="wc-tag">5.057 €/m²</span>
-            <span class="wc-tag">Asking prices</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- WEEK 04 -->
-      <div class="week-card fi">
-        <div class="wc-hdr">
-          <div>
-            <div class="wc-num">Week 04 · Test</div>
-            <div class="wc-title">Aiven Cloud, Índice Verde & Power BI</div>
-          </div>
-          <span class="wc-badge">✅ Concluída</span>
-        </div>
-        <div class="wc-body">
-          <p class="wc-content">Migração para <strong style="color:var(--g-bright)">PostgreSQL Aiven</strong> (cloud). Índice Verde calculado para 7 freguesias (Ambiente Verde, Mobilidade Sustentável, Equipamentos Sociais). Dashboard Power BI com 4 eixos analíticos.</p>
-          <div class="wc-tags">
-            <span class="wc-tag">Aiven Cloud</span><span class="wc-tag">Índice Verde</span>
-            <span class="wc-tag">Power BI</span><span class="wc-tag">4 Eixos</span>
-            <span class="wc-tag">statsmodels</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- WEEK 05 -->
-      <div class="week-card fi" style="border-color:rgba(82,183,136,.3);background:linear-gradient(135deg,var(--bg-card),rgba(26,58,34,.35))">
-        <div class="wc-hdr">
-          <div>
-            <div class="wc-num">Week 05 · Demo Day</div>
-            <div class="wc-title">🚀 Produto Final — Demo Day 27 Jun 2026</div>
-          </div>
-          <span class="wc-badge" style="background:rgba(82,183,136,.2);border-color:var(--g-accent)">🎯 Demo Day</span>
-        </div>
-        <div class="wc-body">
-          <p class="wc-content">Entrega final: 2.776 imóveis analisados, EVI calculado, dashboard Power BI com 4 eixos, site publicado, repositório completo. Pitch de apresentação com narrativa analítica para banca do ISEP.</p>
-          <div class="wc-tags">
-            <span class="wc-tag">Pitch</span><span class="wc-tag">Power BI</span>
-            <span class="wc-tag">GitHub Pages</span><span class="wc-tag">ODS 11</span>
-            <span class="wc-tag">ISEP 2026</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
   </div>
 </section>
 
@@ -1856,34 +1977,12 @@
     <p class="section-intro fi">Equipa multidisciplinar de pós-graduação em Big Data no ISEP — Porto, Portugal.</p>
 
     <div class="team-grid fi">
-      <div class="team-card">
-        <div class="team-av">MA</div>
-        <div class="team-name">Miguel</div>
-        <div class="team-role">Data Engineer</div>
-      </div>
-      <div class="team-card">
-        <div class="team-av">PB</div>
-        <div class="team-name">Pedro</div>
-        <div class="team-role">Dashboard Power BI</div>
-      </div>
-      <div class="team-card">
-        <div class="team-av">LC</div>
-        <div class="team-name">Luís</div>
-        <div class="team-role">Backend Dev</div>
-      </div>
-      <div class="team-card">
-        <div class="team-av">TS</div>
-        <div class="team-name">Tiago</div>
-        <div class="team-role">Analytics Dev</div>
-      </div>
-      <div class="team-card">
-        <div class="team-av">MR</div>
-        <div class="team-name">Mariana</div>
-        <div class="team-role">ML Engineer</div>
-      </div>
-      <div class="team-card">
-        <div class="team-av">AA</div>
-        <div class="team-name">Andressa</div>
+      <div class="team-card" onclick="openPersonModal('miguel')"><div class="team-av">MA</div><div class="team-name">Miguel</div><div class="team-role">Data Engineer</div></div>
+      <div class="team-card" onclick="openPersonModal('pedro')"><div class="team-av">PB</div><div class="team-name">Pedro</div><div class="team-role">Dashboard Power BI</div></div>
+      <div class="team-card" onclick="openPersonModal('luis')"><div class="team-av">LC</div><div class="team-name">Luís</div><div class="team-role">Backend Dev</div></div>
+      <div class="team-card" onclick="openPersonModal('tiago')"><div class="team-av">TS</div><div class="team-name">Tiago</div><div class="team-role">Analytics Dev</div></div>
+      <div class="team-card" onclick="openPersonModal('mariana')"><div class="team-av">MR</div><div class="team-name">Mariana</div><div class="team-role">ML Engineer</div></div>
+      <div class="team-card" onclick="openPersonModal('andressa')"><div class="team-av">AA</div><div class="team-name">Andressa</div>
         <div class="team-role">DevOps / Infra</div>
       </div>
     </div>
@@ -1933,7 +2032,7 @@
         <li><a href="#problema">Problema</a></li>
         <li><a href="#solucao">Solução</a></li>
         <li><a href="#arquitectura">Stack</a></li>
-        <li><a href="#blog">Diário</a></li>
+        <li><a href="#roadmap">Roadmap</a></li>
         <li><a href="#equipa">Equipa</a></li>
         <li><a href="https://github.com/aavelarbelo/urbaneco-analytics" target="_blank" rel="noopener">GitHub ↗</a></li>
       </ul>
@@ -2009,6 +2108,23 @@
         <span class="wc-tag">5 001 registos</span><span class="wc-tag">Schema 24 vars</span><span class="wc-tag">Asking prices</span>
       </div>
     </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     PERSON MODALS
+============================================================ -->
+<div class="person-modal-overlay" id="person-modal-overlay" onclick="closePersonModalOutside(event)">
+  <div class="person-modal" id="person-modal-box">
+    <div class="pm-hdr">
+      <div style="display:flex;align-items:center">
+        <div class="pm-av" id="pm-av"></div>
+        <div><div class="pm-name" id="pm-name"></div><div class="pm-role" id="pm-role"></div></div>
+      </div>
+      <button class="pm-close" onclick="closePersonModal()">✕</button>
+    </div>
+    <div class="pm-body" id="pm-body"></div>
   </div>
 </div>
 
@@ -2110,6 +2226,176 @@
         ? 'var(--g-accent)' : '';
     });
   }, { passive: true });
+
+
+/* ══════════════════════════════════════════════════════════════════
+   ROADMAP DATA & LOGIC
+══════════════════════════════════════════════════════════════════ */
+const RM_KEY = 'urbaneco-rm-v1';
+var rmOpen = {};
+var rmTaskOpen = {};
+try { var _s = JSON.parse(localStorage.getItem(RM_KEY)||'{}'); rmOpen=_s.w||{}; rmTaskOpen=_s.t||{}; } catch(e){}
+function rmSave(){ try{localStorage.setItem(RM_KEY,JSON.stringify({w:rmOpen,t:rmTaskOpen}));}catch(e){} }
+
+const RM_WEEKS = [
+  {id:1,code:'SEM 1',color:'#1a6b3c',bg:'rgba(26,107,60,.1)',label:'Fundações & Infraestrutura',dates:'Empathize + Define · 29 Mai — 4 Jun',objective:'Definir o âmbito do projecto, montar a infraestrutura técnica e produzir o documento de especificação que orientou todas as semanas seguintes.',tasks:[
+    {id:'1.1',title:'Repositório GitHub e estrutura de pastas',person:'Andressa',personKey:'andressa',axis:'Infra',why:'Ponto de partida — sem repositório partilhado não há colaboração.',output:'Repositório com estrutura: src/, data/raw/, data/silver/, data/gold/, notebooks/, docs/, scraper/, infra/',deliverables:['Repositório GitHub activo','.gitignore + .env.example','README.md inicial','Branch strategy definida']},
+    {id:'1.2',title:'docker-compose + PostgreSQL local',person:'Luís',personKey:'luis',axis:'Infra',why:'Base de dados local para ingestão e testes antes da cloud.',output:'docker-compose.yml com PostgreSQL 15 + pgAdmin. Conectividade Python→DB validada.',deliverables:['docker-compose.yml funcional','Ligação psycopg2 testada','INSERT e SELECT validados']},
+    {id:'1.3',title:'Especificação — schema de 24 variáveis',person:'Tiago',personKey:'tiago',axis:'Eixo 1–4',why:'Schema acordado antecipadamente evita retrabalho no scraper e no pipeline.',output:'UrbanEco_Especificacao_Objetivos.docx com 4 eixos, métricas e schema de 24 campos.',deliverables:['Documento de especificação v2','Schema 24 variáveis aprovado','4 eixos analíticos definidos','Nota asking prices incluída'],note:'Princípio honestidade epistémica: todos os preços são asking prices — não escrituras.'},
+    {id:'1.4',title:'Ambiente Python + requirements.txt',person:'Andressa',personKey:'andressa',axis:'Infra',why:'Ambiente reprodutível evita problemas no Demo Day.',output:'Ambiente virtual Python com dependências fixadas.',deliverables:['requirements.txt completo','Ambiente testado em 2+ máquinas']}
+  ]},
+  {id:2,code:'SEM 2',color:'#0e7490',bg:'rgba(14,116,144,.1)',label:'Scraping & Ingestão de Dados',dates:'Ideate · 5 Jun — 11 Jun',objective:'Recolher 2 776 imóveis reais no Porto via scraping automatizado da SuperCasa e carregar os dados na camada RAW da base de dados.',tasks:[
+    {id:'2.1',title:'Scraper Selenium — SuperCasa Porto',person:'Miguel',personKey:'miguel',axis:'Eixo 1–4',confirmar:true,why:'Sem dados reais não há projecto. O scraper alimenta todo o pipeline.',output:'Script scrape_properties_selenium.py. 2 776 imóveis válidos no concelho do Porto.',deliverables:['scrape_properties_selenium.py','supercasa_raw.csv','2 776 imóveis válidos','7 freguesias identificadas'],note:'[CONFIRMAR] autoria exacta do scraper. Alvo: 5 000 válidos. Resultado: 2 776.'},
+    {id:'2.2',title:'Validação CSV e ingestão PostgreSQL RAW',person:'Miguel',personKey:'miguel',axis:'Eixo 1',why:'Garantir dados brutos completos antes de avançar para limpeza.',output:'Dados brutos no PostgreSQL com timestamp de ingestão. Log de nulos por coluna.',deliverables:['Tabela raw.listings populada','Log de ingestão','Relatório de nulos por coluna']},
+    {id:'2.3',title:'Extracção de freguesia a partir do título',person:'Tiago',personKey:'tiago',axis:'Eixo 1 · Eixo 4',why:'O campo parish está nulo nos anúncios — recuperado via regex sobre o título.',output:'Coluna parish preenchida em 62% dos registos. 7 freguesias identificadas.',deliverables:['Coluna parish (62% cobertura)','7 freguesias mapeadas','Tabela de cobertura']},
+    {id:'2.4',title:'Diagnóstico do campo energy_class',person:'Miguel',personKey:'miguel',axis:'Eixo 2 · Eixo 3 · Eixo 4',why:'A classe energética é o campo central do EVI. Necessário documentar disponibilidade.',output:'Diagnóstico: energy_class disponível em ~55% dos registos via scraping directo.',deliverables:['Diagnóstico de cobertura','Decisão: manter NaN onde ausente'],note:'Não inventar valores de classe energética. Afecta Eixos 2, 3 e 4.'}
+  ]},
+  {id:3,code:'SEM 3',color:'#7c3aed',bg:'rgba(124,58,237,.1)',label:'Pipeline, Limpeza & EVI',dates:'Prototype · 12 Jun — 18 Jun',objective:'Transformar dados brutos em dados analíticos limpos, calcular o EVI para cada imóvel e produzir as tabelas de segmento que alimentam o Power BI.',tasks:[
+    {id:'3.1',title:'Limpeza e padronização do dataset',person:'Miguel',personKey:'miguel',axis:'Eixo 1',why:'Sem normalização, "paranhos" e "Paranhos" são segmentos diferentes — invalida as medianas.',output:'Dataset limpo: price_eur, price_m2, typology_clean (T0–T5), parish normalizado. Outliers removidos.',deliverables:['supercasa_clean.csv','price_eur limpo','typology_clean','Outliers documentados']},
+    {id:'3.2',title:'Estatísticas por segmento — mediana + P25/P75',person:'Tiago',personKey:'tiago',axis:'Eixo 1',why:'Base do Eixo 1 e do EVI. Mediana + P25/P75 por (freguesia × tipologia), n ≥ 3.',output:'41 segmentos válidos. Mediana global Porto: 5 057 €/m².',deliverables:['segment_stats.csv — 41 segmentos','Mediana: 5 057 €/m²','P25 e P75 por segmento'],note:'NUNCA usar média. Apenas mediana + P25 + P75. Segmentos com n < 3 ficam em BLANK.'},
+    {id:'3.3',title:'Cálculo do EVI (1–10)',person:'Mariana',personKey:'mariana',axis:'Eixo 3',why:'Métrica proprietária — diferencia o UrbanEco de uma análise genérica.',output:'EVI = (energy_score×0.55 + price_score×0.45)×9+1. 2 615 imóveis. Mediana 6.7. Top EVI 8.6.',deliverables:['Coluna evi_score','top20_evi.csv','EVI mediano: 6.7/10','Top 1: Aldoar/Foz T5 Classe A EVI 8.6']},
+    {id:'3.4',title:'Energy Gap por freguesia',person:'Tiago',personKey:'tiago',axis:'Eixo 4',why:'Eixo 4: rácio imóveis ineficientes (C–F) vs total certificado por freguesia.',output:'Energy Gap: Aldoar/Foz 40.1% | Bonfim 40% | Ramalde 37% | Campanhã 19%.',deliverables:['parish_energy_gap.csv','Energy Gap 7 freguesias']},
+    {id:'3.5',title:'Regressão hedónica OLS — Escada de Valor',person:'Mariana',personKey:'mariana',axis:'Eixo 2',why:'Diferenciador académico: isola o prémio marginal da eficiência energética.',output:'Modelo OLS statsmodels. Coeficientes €/m² por classe energética (F→A). R² e p-values documentados.',deliverables:['Modelo OLS treinado','Coeficientes por classe energética','Escada de Valor','Limitações documentadas'],note:'Objectivo: simplicidade honesta. Limitações (asking prices, amostra) mais importantes que perfeição estatística.'}
+  ]},
+  {id:4,code:'SEM 4',color:'#b45309',bg:'rgba(180,83,9,.1)',label:'Cloud, Índice Verde & Power BI',dates:'Test · 19 Jun — 25 Jun',objective:'Migrar para PostgreSQL Aiven (cloud), calcular o Índice Verde e construir o dashboard Power BI com os 4 eixos obrigatórios.',tasks:[
+    {id:'4.1',title:'Migração para PostgreSQL Aiven (cloud)',person:'Luís',personKey:'luis',axis:'Infra',why:'Base de dados cloud garante acesso partilhado e demo ao vivo no Demo Day.',output:'PostgreSQL Aiven configurado. Dados migrados. Ligação segura via .env.',deliverables:['PostgreSQL Aiven activo','Credenciais em .env','Dados migrados','Testado por 2+ membros']},
+    {id:'4.2',title:'Índice Verde — 7 freguesias',person:'[CONFIRMAR]',personKey:null,axis:'ODS 11',confirmar:true,why:'Componente ODS 11: avalia sustentabilidade territorial de cada freguesia.',output:'Índice Verde: Foz/Nevogilde 50.3 | Centro Histórico 44.8 | Bonfim 43.9 | Ramalde 36.8.',deliverables:['indice_verde.csv','Ranking 7 freguesias','3 dimensões documentadas'],note:'[CONFIRMAR] Metodologia e fontes de dados por dimensão (Ambiente Verde, Mobilidade, Equipamentos).'},
+    {id:'4.3',title:'Dashboard Power BI — 4 eixos',person:'Pedro',personKey:'pedro',axis:'Eixo 1 · 2 · 3 · 4',why:'Entregável principal da apresentação. Comunica os 4 eixos de forma clara e profissional.',output:'trabalho.pbix: Executive Overview + 4 páginas analíticas. Medidas DAX baseadas em mediana.',deliverables:['trabalho.pbix','Eixo 1: Matriz Preço×Tipologia×Freguesia','Eixo 2: Prémio Energético','Eixo 3: EVI Top 20','Eixo 4: Energy Gap por Freguesia'],note:'Sum(€/m²) substituído por Mediana €/m² Válida. P25/P75 como tooltips. n≥3 por segmento.'},
+    {id:'4.4',title:'Exportação dos 4 CSVs para Power BI',person:'Miguel',personKey:'miguel',axis:'Eixo 1–4',why:'O Power BI precisa de CSVs limpos — erro de encoding quebra tudo.',output:'4 CSVs: fact_listings, segment_stats, parish_energy_gap, top20_evi.',deliverables:['fact_listings.csv','segment_stats.csv','parish_energy_gap.csv','top20_evi.csv']},
+    {id:'4.5',title:'Site GitHub Pages + documentação',person:'Andressa',personKey:'andressa',axis:'Comunicação',why:'Entregável de portfólio — partilhado com professores e equipa.',output:'Site publicado em aavelarbelo.github.io/urbaneco-analytics com dados reais e roadmap.',deliverables:['index.html publicado','URL permanente partilhado','Roadmap integrado no site']}
+  ]},
+  {id:5,code:'SEM 5',color:'#831843',bg:'rgba(131,24,67,.1)',label:'Demo Day — Produto Final',dates:'26–27 Jun · ISEP',objective:'Preparar e executar a apresentação final. Congelar o produto, ensaiar o pitch e garantir plano B robusto.',tasks:[
+    {id:'5.1',title:'Freeze do produto',person:'Equipa toda',personKey:null,axis:'Todos',why:'A partir do dia 26, qualquer alteração é risco. O produto está feito.',output:'Tag v1.0 no GitHub. Nenhum commit após freeze.',deliverables:['Tag v1.0 no GitHub','Acordo de freeze','Dashboard .pbix final']},
+    {id:'5.2',title:'Plano B — backup completo',person:'Pedro',personKey:'pedro',axis:'Todos',why:'Uma falha técnica não pode destruir 5 semanas de trabalho.',output:'CSVs offline, screenshots dos 4 eixos, vídeo de 2 min da demo.',deliverables:['CSVs em pen USB + cloud','Screenshots dos 4 eixos PBI','Vídeo demo 2 min','Dashboard funciona offline']},
+    {id:'5.3',title:'Ensaio do pitch com cronómetro',person:'Equipa toda',personKey:null,axis:'Todos',why:'15 minutos passam muito rápido sob pressão.',output:'Pitch ensaiado 2× dentro de 15 min. Transições testadas.',deliverables:['Guião com timings','2 ensaios completos'],note:'Estrutura: Problema 2min → Dados e Pipeline 3min → EVI e Dashboard 5min → ODS 11 e Conclusões 3min → Q&A 2min.'},
+    {id:'5.4',title:'Validação académica — Q1 a Q4',person:'Tiago',personKey:'tiago',axis:'Eixo 1–4',why:'Confirmar que o produto responde às 4 perguntas de investigação.',output:'Checklist académica preenchida. Q1–Q4 respondidas com dados reais.',deliverables:['Q1: Mediana €/m² por tipologia × freguesia — 5 057 €/m² global','Q2: Prémio energético por degrau — Escada de Valor (Eixo 2)','Q3: Top 20 EVI — EVI máx 8.6 (Aldoar/Foz T5 Classe A)','Q4: Energy Gap — Aldoar/Foz 40.1% vs Campanhã 19%']}
+  ]}
+];
+
+const PERSON_DATA = {
+  miguel:{initials:'MA',name:'Miguel',role:'Data Engineer',focus:'Scraping, ingestão, limpeza de dados, pipeline ETL e exportação dos CSVs finais',contribs:[
+    {week:'SEM 2',task:'Scraper Selenium SuperCasa',del:'supercasa_raw.csv · 2 776 imóveis válidos'},
+    {week:'SEM 2',task:'Validação e ingestão PostgreSQL RAW',del:'Tabela raw.listings · log de nulos'},
+    {week:'SEM 2',task:'Diagnóstico do campo energy_class',del:'Relatório de cobertura energética'},
+    {week:'SEM 3',task:'Limpeza e padronização do dataset',del:'supercasa_clean.csv · price_eur · typology_clean'},
+    {week:'SEM 4',task:'Exportação dos 4 CSVs para Power BI',del:'fact_listings · segment_stats · parish_energy_gap · top20_evi'}
+  ]},
+  pedro:{initials:'PB',name:'Pedro',role:'Dashboard Power BI',focus:'Dashboard Power BI, medidas DAX, 4 eixos analíticos, visualizações e plano B da apresentação',contribs:[
+    {week:'SEM 4',task:'Dashboard Power BI — 4 eixos + Executive Overview',del:'trabalho.pbix · 5 páginas analíticas'},
+    {week:'SEM 4',task:'Medidas DAX (Mediana €/m² Válida, P25, P75, n≥3)',del:'Medidas DAX · Tooltips ricos · n≥3 aplicado'},
+    {week:'SEM 5',task:'Plano B — backup completo',del:'CSVs offline · Screenshots · Vídeo demo 2 min'}
+  ]},
+  luis:{initials:'LC',name:'Luís',role:'Backend Dev',focus:'PostgreSQL, docker-compose, PostgreSQL Aiven cloud e suporte técnico de infraestrutura',contribs:[
+    {week:'SEM 1',task:'docker-compose + PostgreSQL local',del:'docker-compose.yml · Ligação psycopg2 testada'},
+    {week:'SEM 4',task:'Migração para PostgreSQL Aiven (cloud)',del:'PostgreSQL Aiven activo · Credenciais seguras'}
+  ]},
+  tiago:{initials:'TS',name:'Tiago',role:'Analytics Dev',focus:'Segmentação, estatísticas por segmento, Energy Gap, perguntas de investigação e validação metodológica',contribs:[
+    {week:'SEM 1',task:'Documento de especificação — schema 24 variáveis',del:'Especificação v2 · 4 eixos definidos · Nota asking prices'},
+    {week:'SEM 2',task:'Extracção de freguesia a partir do título',del:'Coluna parish · 62% cobertura · 7 freguesias'},
+    {week:'SEM 3',task:'Estatísticas por segmento — mediana + P25/P75',del:'segment_stats.csv · 41 segmentos · 5 057 €/m²'},
+    {week:'SEM 3',task:'Energy Gap por freguesia',del:'parish_energy_gap.csv · Aldoar/Foz 40.1% | Campanhã 19%'},
+    {week:'SEM 5',task:'Validação académica — Q1 a Q4',del:'Checklist Q1–Q4 · 4 perguntas respondidas com dados reais'}
+  ]},
+  mariana:{initials:'MR',name:'Mariana',role:'ML Engineer',focus:'EVI, energy_score, price_score, regressão hedónica OLS e análise do prémio energético',contribs:[
+    {week:'SEM 3',task:'Cálculo do EVI (1–10)',del:'evi_score · 2 615 imóveis · mediana 6.7 · Top EVI 8.6'},
+    {week:'SEM 3',task:'Regressão hedónica OLS — Escada de Valor',del:'Modelo OLS statsmodels · Coeficientes F→A · R² documentado'}
+  ]},
+  andressa:{initials:'AA',name:'Andressa',role:'DevOps / Documentação',focus:'GitHub, ambiente Python, site GitHub Pages, roadmap e narrativa do projecto',contribs:[
+    {week:'SEM 1',task:'Repositório GitHub e estrutura de pastas',del:'Repositório · .gitignore · .env.example · README'},
+    {week:'SEM 1',task:'Ambiente Python + requirements.txt',del:'requirements.txt · Ambiente reprodutível testado'},
+    {week:'SEM 4',task:'Site GitHub Pages + documentação',del:'index.html publicado · URL permanente partilhado'},
+    {week:'SEM 5',task:'Roadmap integrado no site',del:'Roadmap 5 semanas · Documentação completa'}
+  ]}
+};
+
+
+function rmToggleWeek(id){ rmOpen[id]=!rmOpen[id]; rmSave(); renderRoadmap(); }
+function rmToggleTask(id){ rmTaskOpen[id]=!rmTaskOpen[id]; rmSave(); renderRoadmap(); }
+
+function openPersonModal(key){
+  var p = PERSON_DATA[key]; if(!p) return;
+  document.getElementById('pm-av').textContent   = p.initials;
+  document.getElementById('pm-name').textContent = p.name;
+  document.getElementById('pm-role').textContent = p.role;
+  var b = '<div class="pm-section-title">// Foco principal</div>';
+  b += '<p style="font-size:.82rem;color:var(--c100);line-height:1.6;margin-bottom:.5rem">' + p.focus + '</p>';
+  b += '<div class="pm-section-title">// Contribuicoes por semana</div>';
+  p.contribs.forEach(function(co){
+    b += '<div class="pm-contrib-item">'
+       + '<div class="pm-contrib-week">' + co.week + '</div>'
+       + '<div><div class="pm-contrib-text">' + co.task + '</div>'
+       + '<div class="pm-contrib-del" style="color:var(--g-accent);font-family:var(--ff-mono);font-size:.65rem">' + co.del + '</div>'
+       + '</div></div>';
+  });
+  document.getElementById('pm-body').innerHTML = b;
+  document.getElementById('person-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePersonModal(){
+  document.getElementById('person-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closePersonModalOutside(e){ if(e.target.id === 'person-modal-overlay') closePersonModal(); }
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closePersonModal(); });
+
+function renderRoadmap(){
+  var el = document.getElementById('rm-weeks');
+  if(!el) return;
+  el.innerHTML = RM_WEEKS.map(function(w){
+    var isOpen = !!rmOpen[w.id];
+    var tasks = w.tasks.map(function(t){
+      var tkey  = w.id + '-' + t.id;
+      var tOpen = !!rmTaskOpen[tkey];
+      var pb;
+      if(t.confirmar){
+        pb = '<span class="rm-confirmar">CONFIRMAR</span>';
+      } else if(t.personKey){
+        pb = '<span class="rm-person-badge rm-person-clickable" data-key="' + t.personKey + '">' + t.person + '</span>';
+      } else {
+        pb = '<span class="rm-person-badge">' + t.person + '</span>';
+      }
+      var ab = '<span class="rm-axis-badge">' + t.axis + '</span>';
+      var tbody = '';
+      if(tOpen){
+        var dels = t.deliverables.map(function(d){ return '<span class="rm-deliverable">' + d + '</span>'; }).join('');
+        tbody = '<div class="rm-task-body">'
+              + '<div class="rm-field-label">Objectivo</div><div class="rm-field-text">' + t.why + '</div>'
+              + '<div class="rm-field-label">Output</div><div class="rm-field-text">' + t.output + '</div>'
+              + '<div class="rm-field-label">Entregaveis</div><div>' + dels + '</div>'
+              + (t.note ? '<div class="rm-note">' + t.note + '</div>' : '')
+              + '</div>';
+      }
+      return '<div class="rm-task' + (tOpen ? ' open' : '') + '" data-tkey="' + tkey + '">'
+           + '<button class="rm-task-hdr rm-task-btn" data-tkey="' + tkey + '">'
+           + '<span class="rm-task-id">' + t.id + '</span>'
+           + '<span class="rm-task-title">' + t.title + '</span>'
+           + pb + ab + '<span class="rm-chevron-sm">&#9660;</span>'
+           + '</button>' + tbody + '</div>';
+    }).join('');
+    var wbody = isOpen ? '<div class="rm-week-body"><div class="rm-objective">' + w.objective + '</div>' + tasks + '</div>' : '';
+    return '<div class="rm-week' + (isOpen ? ' open' : '') + '" style="--rm-color:' + w.color + ';--rm-bg:' + w.bg + '">'
+         + '<button class="rm-week-hdr rm-week-btn" data-wid="' + w.id + '">'
+         + '<div class="rm-week-hdr-inner">'
+         + '<div class="rm-wk-num">' + w.id + '</div>'
+         + '<div class="rm-wk-info"><div class="rm-wk-code">' + w.code + '</div>'
+         + '<div class="rm-wk-title">' + w.label + '</div>'
+         + '<div class="rm-wk-dates">' + w.dates + '</div></div>'
+         + '<div style="font-family:var(--ff-mono);font-size:.68rem;color:' + w.color + ';flex-shrink:0">' + w.tasks.length + ' tarefas</div>'
+         + '<span class="rm-chevron">&#9660;</span>'
+         + '</div></button>' + wbody + '</div>';
+  }).join('');
+  el.querySelectorAll('.rm-week-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ rmToggleWeek(Number(btn.getAttribute('data-wid'))); });
+  });
+  el.querySelectorAll('.rm-task-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ rmToggleTask(btn.getAttribute('data-tkey')); });
+  });
+  el.querySelectorAll('.rm-person-clickable').forEach(function(span){
+    span.addEventListener('click', function(e){ e.stopPropagation(); openPersonModal(span.getAttribute('data-key')); });
+  });
+}
+renderRoadmap();
+
 </script>
 
 </body>
