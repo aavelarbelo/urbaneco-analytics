@@ -1,24 +1,31 @@
-# Python cache
+# Python
 __pycache__/
 *.pyc
 *.pyo
-
-# Virtual environments
 .venv/
 venv/
 env/
-
-# Environment variables
-.env
-
-# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Data files
-data/raw/
-data/processed/
-data/synthetic/
+# Segredos e configuração local
+.env
+apikey.txt
+*.key
 
-# OS files
+# Dados (não publicados: termos de utilização do portal de origem)
+data/
+*.csv
+*.xlsx
+*.xls
+
+# Ficheiros de trabalho
+*.pbix
+*.docx
+*.txt
+!requirements.txt
+docs/*.html
+urbaneco_sprint*.html
+
+# Sistema
 .DS_Store
 Thumbs.db

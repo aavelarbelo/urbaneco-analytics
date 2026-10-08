@@ -1,10 +1,8 @@
 pandas
 numpy
+openpyxl
 sqlalchemy
 psycopg2-binary
 python-dotenv
-jupyter
-matplotlib
-seaborn
-streamlit
-plotly
+selenium
+webdriver-manager
