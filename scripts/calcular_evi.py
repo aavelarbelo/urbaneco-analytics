@@ -3,7 +3,7 @@ UrbanEco Analytics — Pipeline de Calculo EVI
 =============================================
 ODS 11: Energy Efficiency Profitability in Porto's Real Estate Market
 
-Autor: Andressa Belo (coordenacao tecnica e analitica)
+Autora: Andressa Avelar Belo
 Data:  Junho 2026
 
 O que este script faz:
