@@ -1,4 +1,6 @@
-# UrbanEco Analytics — eficiência energética e preço da habitação no Porto
+# UrbanEco Analytics: eficiência energética e preço da habitação no Porto
+
+**Autora:** Andressa Avelar Belo · [LinkedIn](https://linkedin.com/in/andressaavelar) · [GitHub](https://github.com/aavelarbelo)
 
 **Pergunta:** como se relaciona a eficiência energética com o preço por m² pedido nos anúncios de habitação no Porto?
 
@@ -6,7 +8,18 @@ Projeto final de grupo da Pós-Graduação em Big Data & Decision Making (ISEP, 
 
 ![Dashboard UrbanEco — Visão Geral](docs/img/visao_geral.png)
 
----
+## Autoria
+
+Projeto final de grupo: Pós-Graduação em Big Data & Decision Making, ISEP, 2026.
+
+**A minha contribuição:**
+- recolha dos dados (scraping do SuperCasa com Python/Selenium);
+- limpeza e cálculo do EVI em Python;
+- base PostgreSQL local em Docker;
+- documentação do projeto;
+- revisão do dashboard em outubro de 2026.
+
+As medidas DAX originais e a base PostgreSQL na Aiven foram desenvolvidas pelo grupo.
 
 ## Resultados principais
 
@@ -20,23 +33,20 @@ Base: os 2.874 anúncios de venda do dashboard (portal SuperCasa, concelho do Po
 | 4 | **A amostra está enviesada para imóveis eficientes.** | 91% da obra nova certificada é A/B, contra 50% dos usados. |
 | 5 | **Associação, não causalidade.** | A diferença de preço pode refletir a idade, os acabamentos, o andar ou a vista do imóvel. |
 
----
-
 ## Pipeline
 
+```mermaid
+flowchart LR
+    A[SuperCasa<br/>anúncios de venda, Porto] --> B[Recolha<br/>Python + Selenium]
+    B --> C[Limpeza e normalização<br/>Python/pandas]
+    C --> D[(PostgreSQL)]
+    D --> E[Power BI<br/>Power Query + DAX, 7 páginas]
 ```
-SuperCasa (anúncios de venda, Porto)
-   → recolha com Python + Selenium
-   → limpeza e normalização com Python/pandas
-       · preço e área convertidos para números
-       · €/m² calculado e filtrado entre 500 e 25.000
-       · freguesias agrupadas nas 7 uniões de 2013
-       · remoção de duplicados por URL
-   → PostgreSQL
-       · local, em Docker (scripts deste repositório)
-       · base partilhada do grupo na Aiven (fonte do dashboard)
-   → Power BI (Power Query + DAX, 7 páginas)
-```
+
+| Etapa | O que acontece |
+|---|---|
+| Limpeza e normalização | Preço e área convertidos para números; €/m² calculado e filtrado entre 500 e 25.000; freguesias agrupadas nas 7 uniões de 2013; remoção de duplicados por URL |
+| PostgreSQL | Local, em Docker (scripts deste repositório); base partilhada do grupo na Aiven (fonte do dashboard) |
 
 ### Os números de cada etapa
 
@@ -56,8 +66,6 @@ O projeto tem duas versões do Energy Value Index:
 - **Dashboard (DAX), escala 0–100:** `(Price Score × 0,4 + Energy Score × 0,3 + Location Score × 0,3) × 20`. Inclui um índice verde por freguesia. O EVI médio é 59,46, sobre 2.678 anúncios.
 
 Os pesos de ambos os índices são escolhas do projeto, não foram estimados a partir dos dados.
-
----
 
 ## Dashboard Power BI
 
@@ -79,7 +87,26 @@ O dashboard do grupo foi revisto em outubro de 2026. As correções foram:
 | Nos gráficos de serviços por freguesia, a barra maior correspondia à pior posição. | Passaram a mostrar uma pontuação: 8 − posição. |
 | Havia filtros escondidos em alguns visuais e KPIs com a média de €/m². | Os filtros foram documentados e os KPIs passaram a usar a mediana. |
 
----
+## Limitações
+
+- São preços pedidos nos anúncios, não preços de transação.
+- Há uma única recolha (junho de 2026) e só no concelho do Porto.
+- O dashboard depende da base de dados do grupo e não é atualizável fora dela.
+- Há possíveis anúncios repetidos com IDs diferentes: 695 anúncios formam 263 grupos com características iguais, a maioria de obra nova. Foram mantidos, porque não alteram a mediana.
+- Os resultados mostram associação, não causalidade.
+
+## Como executar
+
+Os dados recolhidos **não são publicados**, para respeitar os termos de utilização do portal de origem. Os scripts esperam encontrar o dataset em `data/raw/`.
+
+```bash
+cp .env.example .env              # preencher DB_NAME, DB_USER, DB_PASSWORD
+docker compose up -d              # PostgreSQL 16 local
+pip install -r requirements.txt
+python scripts/calcular_evi.py    # gera os CSV em data/processed/
+```
+
+Requer Python 3.11 ou superior. O scraper usa o Chrome, com o ChromeDriver gerido pelo `webdriver-manager`.
 
 ## Estrutura do repositório
 
@@ -95,45 +122,3 @@ urbaneco-analytics/
 ├── docs/metodologia.md
 └── docs/img/visao_geral.png
 ```
-
----
-
-## Como executar
-
-Os dados recolhidos **não são publicados**, para respeitar os termos de utilização do portal de origem. Os scripts esperam encontrar o dataset em `data/raw/`.
-
-```bash
-cp .env.example .env              # preencher DB_NAME, DB_USER, DB_PASSWORD
-docker compose up -d              # PostgreSQL 16 local
-pip install -r requirements.txt
-python scripts/calcular_evi.py    # gera os CSV em data/processed/
-```
-
-Requer Python 3.11 ou superior. O scraper usa o Chrome, com o ChromeDriver gerido pelo `webdriver-manager`.
-
----
-
-## Limitações
-
-- São preços pedidos nos anúncios, não preços de transação.
-- Há uma única recolha (junho de 2026) e só no concelho do Porto.
-- O dashboard depende da base de dados do grupo e não é atualizável fora dela.
-- Há possíveis anúncios repetidos com IDs diferentes: 695 anúncios formam 263 grupos com características iguais, a maioria de obra nova. Foram mantidos, porque não alteram a mediana.
-- Os resultados mostram associação, não causalidade.
-
----
-
-## Autoria
-
-Projeto final de grupo: Pós-Graduação em Big Data & Decision Making, ISEP, 2026.
-
-**A minha contribuição:**
-- recolha dos dados (scraping do SuperCasa com Python/Selenium);
-- limpeza e cálculo do EVI em Python;
-- base PostgreSQL local em Docker;
-- documentação do projeto;
-- revisão do dashboard em outubro de 2026.
-
-As medidas DAX originais e a base PostgreSQL na Aiven foram desenvolvidas pelo grupo.
-
-**Andressa Avelar Belo** · [LinkedIn](https://linkedin.com/in/andressaavelar) · [GitHub](https://github.com/aavelarbelo)
